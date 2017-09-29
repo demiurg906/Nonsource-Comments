@@ -4,11 +4,15 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.diagnostic.Logger
 
-class MyAction: AnAction() {
+class MyAction : AnAction() {
     val logger = Logger.getInstance(MyAction::class.java)
-
-    override fun actionPerformed(e: AnActionEvent?) {
-        logger.info("Hello")
+    companion object {
+        const val ID = "Comments.MyAction"
     }
 
+
+    override fun actionPerformed(e: AnActionEvent) {
+        logger.info("hello world")
+        println("hello world")
+    }
 }

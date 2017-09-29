@@ -21,17 +21,16 @@
     <toolWindow
       id="Hey"
       factoryClass="com.jetbrains.plugin.idea.nonsource.comments.components.MyToolWindowFactory"
-      anchor="bottom"
+      anchor="left"
       secondary="false"
     />
   </extensions>
 
   <actions>
-    <action
-      class="com.jetbrains.plugin.idea.nonsource.comments.actions.MyAction"
-      id="com.jetbrains.plugin.idea.nonsource.comments.actions.MyAction"
-      text="my action"
-      >
+    <action id="Comments.MyAction" class="com.jetbrains.plugin.idea.nonsource.comments.actions.MyAction"
+            text="Press me again"
+            icon="/general/add.png">
+      <add-to-group group-id="CodeMenu" anchor="last"/>
     </action>
   </actions>
 
