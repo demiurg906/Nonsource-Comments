@@ -41,7 +41,6 @@ class AddCommentAction : AnAction(), IntentionAction {
     }
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
-        println("hello")
         val commentService = CommentService.getInstance(project)
         if (editor == null) {
             logger.warn("There is no active editor")
