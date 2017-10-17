@@ -1,7 +1,9 @@
 package com.jetbrains.plugin.idea.nonsource.comments.services
 
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.plugin.idea.nonsource.comments.model.CodeHook
+import com.jetbrains.plugin.idea.nonsource.comments.components.MyToolbarEditor
 import com.jetbrains.plugin.idea.nonsource.comments.model.Comment
 
 /**
@@ -12,11 +14,19 @@ import com.jetbrains.plugin.idea.nonsource.comments.model.Comment
 /**
  * Service for work with comments
  */
-interface CommentService {
+interface CommentService/*: PersistentStateComponent<CommentService.State>*/ {
+    companion object {
+        fun getInstance(project: Project): CommentService = ServiceManager.getService(project, CommentService::class.java)
+    }
+
+    data class State(val comments: MutableMap<VirtualFile, MutableList<Comment>>)
+
+    data class Position(val file: VirtualFile? = null, val line: Int = 0)
+
     /**
-     * saves the comment
+     * saves the text
      */
-    fun save(comment: Comment)
+    fun addNewComment(file: VirtualFile, line: Int)
 
     /**
      * removes comments
@@ -24,7 +34,25 @@ interface CommentService {
     fun remove(comments: Collection<Comment>)
 
     /**
-     * Get all comments for file
+     * removes one text
      */
-    fun getForFile(file: VirtualFile): Map<CodeHook, Comment>
+    fun remove(comment: Comment)
+
+    /**
+     * Get all comments for file mapped to line number
+     */
+    fun getForFile(file: VirtualFile): Map<Int, Comment>
+
+    /**
+     * Active editor in toolbar
+     */
+    var toolbarEditor: MyToolbarEditor
+
+    /**
+     * Active chosen comment
+     */
+    val currentComment: Comment?
+
+    var currentPosition: Position
 }
+

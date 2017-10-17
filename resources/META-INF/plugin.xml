@@ -17,6 +17,12 @@
 
   <idea-version since-build="145.0"/>
 
+  <project-components>
+    <component>
+      <implementation-class>com.jetbrains.plugin.idea.nonsource.comments.components.CommentInitializer</implementation-class>
+    </component>
+  </project-components>
+
   <extensions defaultExtensionNs="com.intellij">
     <toolWindow
       id="Hey"
@@ -24,11 +30,20 @@
       anchor="left"
       secondary="false"
     />
+    <intentionAction>
+      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.AddCommentAction</className>
+      <category>Nonsource comments</category>
+      <descriptionDirectoryName>NonsourceComments</descriptionDirectoryName>
+    </intentionAction>
+
+    <projectService
+            serviceInterface="com.jetbrains.plugin.idea.nonsource.comments.services.CommentService"
+            serviceImplementation="com.jetbrains.plugin.idea.nonsource.comments.services.CommentServiceImpl"/>
   </extensions>
 
   <actions>
-    <action id="Comments.MyAction" class="com.jetbrains.plugin.idea.nonsource.comments.actions.MyAction"
-            text="Press me again"
+    <action id="Comments.AddCommentAction" class="com.jetbrains.plugin.idea.nonsource.comments.actions.AddCommentAction"
+            text="Add comment"
             icon="/general/add.png">
       <add-to-group group-id="CodeMenu" anchor="last"/>
     </action>

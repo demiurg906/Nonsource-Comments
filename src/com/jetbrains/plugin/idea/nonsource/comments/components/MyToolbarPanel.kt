@@ -5,58 +5,52 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
-import com.intellij.openapi.wm.ToolWindow
-import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFileFactory
-import com.intellij.ui.EditorTextField
-import com.intellij.ui.content.ContentFactory
-import com.intellij.ui.content.ContentManager
 import com.intellij.util.ui.components.BorderLayoutPanel
-import com.jetbrains.plugin.idea.nonsource.comments.actions.MyAction
+import com.jetbrains.plugin.idea.nonsource.comments.actions.AddCommentAction
+import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
 import javax.swing.JComponent
 
 /**
  * @author demiurg
- *         07.10.17
+ *         11.10.17
  */
 
-class MyToolWindowFactory : ToolWindowFactory {
-    override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        val contentFactory = ContentFactory.SERVICE.getInstance()
-        val contentManager = toolWindow.contentManager
-
-        addTab(project, MyToolbarPanel(project), "Hello", contentFactory, contentManager)
-    }
-
-    private fun addTab(project: Project, panel: MyToolbarPanel, titleKey: String, contentFactory: ContentFactory, contentManager: ContentManager) {
-        val allFileContent = contentFactory.createContent(panel, titleKey, false)
-        allFileContent.isCloseable = false
-        contentManager.addContent(allFileContent)
-    }
-}
-
-class MyToolbarPanel(project: Project): SimpleToolWindowPanel(true, false) {
-    init {
-        setToolbar(toolbar(project))
-    }
-
+class MyToolbarPanel(project: Project) : SimpleToolWindowPanel(true, false) {
     val logger = Logger.getInstance(MyToolbarPanel::class.java)
 
-    private fun toolbar(project: Project): JComponent {
+    init {
+//        setToolbar(toolbar(project))
+//        val editor = toolbarEditor(project)
+        val (editor, component) = toolbar(project)
+        CommentService.getInstance(project).toolbarEditor = editor
+//        setToolbar(editor.component)
+//        add(editor.component)
+        add(component)
+    }
+
+    private fun toolbarEditor(project: Project): MyToolbarEditor {
+        val psiFile  = PsiFileFactory.getInstance(project).createFileFromText(JavaLanguage.INSTANCE, "")
+        val document  = PsiDocumentManager.getInstance(project).getDocument(psiFile)
+        return MyToolbarEditor(document, project, JavaFileType.INSTANCE)
+    }
+
+
+
+    private fun toolbar(project: Project): Pair<MyToolbarEditor, JComponent> {
         val toolBarPanel = BorderLayoutPanel()
 
         // добавление кнопочек
         val actionGroup = DefaultActionGroup()
-        actionGroup.add(ActionManager.getInstance().getAction(MyAction.ID))
+        actionGroup.add(ActionManager.getInstance().getAction(AddCommentAction.ID))
         val actionToolbar = ActionManager.getInstance().createActionToolbar("codeCommentsViewToolbar", actionGroup, true)
         toolBarPanel.addToTop(actionToolbar.component)
 
         // добавление Editor'а
-        // TODO: поменять на MyEditor
+        // TODO: поменять на MyToolbarEditor
 
         val psiFile = PsiFileFactory.getInstance(project).createFileFromText(
                 JavaLanguage.INSTANCE, ""
@@ -67,10 +61,10 @@ class MyToolbarPanel(project: Project): SimpleToolWindowPanel(true, false) {
 //        val editor = editorFactory.createEditor(document!!, project, EditorKind.MAIN_EDITOR)
 //        editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
 
-        val editor = EditorTextField(document, project, JavaFileType.INSTANCE, false, false)
+        val editor = MyToolbarEditor(document, project, JavaFileType.INSTANCE)
         editor.addSettingsProvider { with(it.settings) {
             isLineNumbersShown = true
-//            isAdditionalPageAtBottom = true
+            isAdditionalPageAtBottom = true
             isFoldingOutlineShown = true
             isAnimatedScrolling = true
             isRefrainFromScrolling = true
@@ -85,10 +79,11 @@ class MyToolbarPanel(project: Project): SimpleToolWindowPanel(true, false) {
         } }
 
         editor.autoscrolls = true
-        val e: Editor? = editor.editor
         toolBarPanel.addToCenter(editor.component)
 
+        CommentService.getInstance(project).toolbarEditor = editor
 
-        return toolBarPanel
+        return editor to toolBarPanel
     }
+
 }
