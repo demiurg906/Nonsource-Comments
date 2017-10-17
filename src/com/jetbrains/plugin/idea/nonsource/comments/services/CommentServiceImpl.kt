@@ -39,6 +39,16 @@ class CommentServiceImpl : CommentService {
             }
         }
 
+    override fun addNewComment() {
+        // TODO: надо бы порефакторить эти две функции
+        with(currentPosition) {
+            if (file == null) {
+                logger.warn("current file is null")
+                return
+            }
+            addNewComment(file, line)
+        }
+    }
 
     override fun addNewComment(file: VirtualFile, line: Int) {
         // TODO: переделать генерацию коммента через builder
@@ -48,15 +58,15 @@ class CommentServiceImpl : CommentService {
         }
         state.comments[file]?.add(comment)
         currentPosition = Position(file, line)
-//        currentComment = text
     }
 
-    override fun remove(comment: Comment) {
-        state.comments[comment.hook.sourceFile]?.remove(comment)
-    }
+    override fun flush() {
+        val comment = currentComment ?: return
 
-    override fun remove(comments: Collection<Comment>) {
-        comments.forEach { remove(it) }
+        if (comment.text == "") {
+            state.comments[comment.hook.sourceFile]?.remove(comment)
+            currentComment = null
+        }
     }
 
     override fun getForFile(file: VirtualFile): Map<Int, Comment> {

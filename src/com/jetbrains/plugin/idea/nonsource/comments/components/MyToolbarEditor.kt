@@ -10,6 +10,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorTextField
 import com.jetbrains.plugin.idea.nonsource.comments.model.Comment
 import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
+import java.awt.event.FocusEvent
+import java.awt.event.FocusListener
 
 
 /**
@@ -34,11 +36,8 @@ class MyToolbarEditor(
                     return
                 }
                 val commentService = CommentService.getInstance(project)
-                val comment = commentService.currentComment
-                if (comment == null) {
-                    logger.warn("current comment is null")
-                    return
-                }
+//                val comment = commentService.currentComment ?: commentService.addNewComment() ?: return
+                val comment = commentService.currentComment ?: return
                 val line = commentService.currentPosition.line
                 val file = commentService.currentPosition.file
                 if (file == null) {
@@ -47,6 +46,22 @@ class MyToolbarEditor(
                 }
                 if (line == comment.hook.line ||  file != comment.hook.sourceFile) {
                     comment.text = event.document.text
+                }
+            }
+        })
+        addFocusListener(object : FocusListener {
+            val commentService = CommentService.getInstance(project)
+            override fun focusLost(p0: FocusEvent?) {
+                // при потере фокуса трем коммент, если он пустой
+                commentService.flush()
+            }
+
+            override fun focusGained(p0: FocusEvent?) {
+                // при получении фокуса создаем новый пустой коммент
+                with(commentService) {
+                    if (currentComment == null) {
+                        addNewComment()
+                    }
                 }
             }
         })

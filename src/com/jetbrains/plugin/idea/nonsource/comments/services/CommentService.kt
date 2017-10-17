@@ -24,19 +24,19 @@ interface CommentService/*: PersistentStateComponent<CommentService.State>*/ {
     data class Position(val file: VirtualFile? = null, val line: Int = 0)
 
     /**
-     * saves the text
+     * Creates new comment from current position
+     */
+    fun addNewComment()
+
+    /**
+     * Creates new comment from given position
      */
     fun addNewComment(file: VirtualFile, line: Int)
 
     /**
-     * removes comments
+     * Delete current comment from map if it's empty
      */
-    fun remove(comments: Collection<Comment>)
-
-    /**
-     * removes one text
-     */
-    fun remove(comment: Comment)
+    fun flush()
 
     /**
      * Get all comments for file mapped to line number
