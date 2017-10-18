@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.event.EditorFactoryEvent
 import com.intellij.openapi.editor.event.EditorFactoryListener
 import com.jetbrains.plugin.idea.nonsource.comments.listeners.EditorCaretListener
+import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
 
 /**
  * @author demiurg
@@ -19,7 +20,13 @@ class CommentInitializer : ProjectComponent, Disposable {
                 val editor = event.editor
                 editor.caretModel.addCaretListener(EditorCaretListener())
                 // TODO: надо добавлять listener для всех кроме MyToolBarEditor
-//                editor.contentComponent.addFocusListener(EditorFocusListener(editor))
+                // editor.contentComponent.addFocusListener(EditorFocusListener(editor))
+                // TODO: для всех текстовых editor'ов надо добавлять gutter
+                val project = editor.project
+                if (project == null) {
+                    return
+                }
+                editor.gutter.registerTextAnnotation(CommentGutterAnnotation(CommentService.getInstance(project)))
             }
 
             override fun editorReleased(event: EditorFactoryEvent) {

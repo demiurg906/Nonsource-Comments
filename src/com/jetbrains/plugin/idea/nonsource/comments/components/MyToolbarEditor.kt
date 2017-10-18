@@ -36,7 +36,6 @@ class MyToolbarEditor(
                     return
                 }
                 val commentService = CommentService.getInstance(project)
-//                val comment = commentService.currentComment ?: commentService.addNewComment() ?: return
                 val comment = commentService.currentComment ?: return
                 val line = commentService.currentPosition.line
                 val file = commentService.currentPosition.file
@@ -44,7 +43,7 @@ class MyToolbarEditor(
                     logger.warn("current file is null")
                     return
                 }
-                if (line == comment.hook.line ||  file != comment.hook.sourceFile) {
+                if (line == comment.hook.line || file != comment.hook.sourceFile) {
                     comment.text = event.document.text
                 }
             }
