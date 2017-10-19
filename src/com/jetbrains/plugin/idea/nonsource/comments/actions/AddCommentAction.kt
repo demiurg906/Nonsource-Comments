@@ -9,7 +9,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
-import com.jetbrains.plugin.idea.nonsource.comments.util.getFileFromEditor
 
 /**
  * @author demiurg
@@ -41,22 +40,7 @@ class AddCommentAction : AnAction(), IntentionAction {
     }
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
-        println("hello")
-        val commentService = CommentService.getInstance(project)
-        if (editor == null) {
-            logger.warn("There is no active editor")
-            return
-        }
-        val caret = editor.caretModel
-        val line = caret.logicalPosition.line
-        val virtualFile = getFileFromEditor(editor)
-        if (virtualFile == null) {
-            logger.warn("no file in AddCommentAction")
-            return
-        }
-
-        commentService.addNewComment(virtualFile, line)
-        commentService.toolbarEditor.grabFocus()
+        CommentService.getInstance(project).toolbarEditor.grabFocus()
     }
 
     override fun startInWriteAction(): Boolean {

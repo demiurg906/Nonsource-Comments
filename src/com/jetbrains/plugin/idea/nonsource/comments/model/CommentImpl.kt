@@ -11,4 +11,8 @@ class CommentImpl(override var text: String = "",
                   virtualFile: VirtualFile,
                   line: Int) : Comment {
     override val hook: CodeHook = CodeHookImpl(virtualFile, line)
+
+    override fun toString(): String {
+        return "CommentImpl(${hook.sourceFile.name}:${hook.line} '$text')"
+    }
 }

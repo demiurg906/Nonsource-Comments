@@ -60,11 +60,21 @@ class CommentServiceImpl : CommentService {
         currentPosition = Position(file, line)
     }
 
-    override fun flush() {
-        val comment = currentComment ?: return
-
+    override fun flush(comment: Comment?) {
+        if (comment == null) {
+            return
+        }
         if (comment.text == "") {
-            state.comments[comment.hook.sourceFile]?.remove(comment)
+            val file = comment.hook.sourceFile
+            val commentsList = state.comments[file]
+            if (commentsList == null) {
+                logger.warn("WTF? comment exists but list with comment isn't")
+                return
+            }
+            commentsList.remove(comment)
+            if (commentsList.isEmpty()) {
+                state.comments.remove(file, commentsList)
+            }
             currentComment = null
         }
     }
