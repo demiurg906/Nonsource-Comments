@@ -3,9 +3,13 @@ package com.jetbrains.plugin.idea.nonsource.comments.components
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.EditorGutterAction
+import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.event.EditorFactoryEvent
 import com.intellij.openapi.editor.event.EditorFactoryListener
 import com.jetbrains.plugin.idea.nonsource.comments.listeners.EditorCaretListener
+import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
+import java.awt.Cursor
 
 /**
  * @author demiurg
@@ -19,7 +23,25 @@ class CommentInitializer : ProjectComponent, Disposable {
                 val editor = event.editor
                 editor.caretModel.addCaretListener(EditorCaretListener())
                 // TODO: надо добавлять listener для всех кроме MyToolBarEditor
-//                editor.contentComponent.addFocusListener(EditorFocusListener(editor))
+                // editor.contentComponent.addFocusListener(EditorFocusListener(editor))
+                // TODO: для всех текстовых editor'ов надо добавлять gutter
+                val project = editor.project
+                if (project == null) {
+                    return
+                }
+                editor.gutter.registerTextAnnotation(CommentGutterAnnotation(CommentService.getInstance(project)),
+                        object : EditorGutterAction {
+                            val commentService = CommentService.getInstance(project)
+
+                            override fun doAction(line: Int) {
+                                editor.caretModel.currentCaret.moveToLogicalPosition(LogicalPosition(line, 0, true))
+                                commentService.toolbarEditor.grabFocus()
+                            }
+
+                            override fun getCursor(lineNum: Int): Cursor? {
+                                return editor.component.cursor
+                            }
+                        })
             }
 
             override fun editorReleased(event: EditorFactoryEvent) {
