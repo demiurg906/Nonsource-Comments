@@ -36,7 +36,7 @@ interface CommentService/*: PersistentStateComponent<CommentService.State>*/ {
     /**
      * Delete current comment from map if it's empty
      */
-    fun flush()
+    fun flush(comment: Comment?)
 
     /**
      * Get all comments for file mapped to line number

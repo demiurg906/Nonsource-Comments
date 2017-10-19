@@ -60,9 +60,10 @@ class CommentServiceImpl : CommentService {
         currentPosition = Position(file, line)
     }
 
-    override fun flush() {
-        val comment = currentComment ?: return
-
+    override fun flush(comment: Comment?) {
+        if (comment == null) {
+            return
+        }
         if (comment.text == "") {
             val file = comment.hook.sourceFile
             val commentsList = state.comments[file]
