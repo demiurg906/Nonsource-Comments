@@ -14,12 +14,10 @@ import com.jetbrains.plugin.idea.nonsource.comments.model.Comment
 /**
  * Service for work with comments
  */
-interface CommentService/*: PersistentStateComponent<CommentService.State>*/ {
+interface CommentService {
     companion object {
         fun getInstance(project: Project): CommentService = ServiceManager.getService(project, CommentService::class.java)
     }
-
-    data class State(val comments: MutableMap<VirtualFile, MutableList<Comment>>)
 
     data class Position(val file: VirtualFile? = null, val line: Int = 0)
 

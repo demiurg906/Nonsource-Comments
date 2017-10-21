@@ -12,15 +12,14 @@ import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService.Posi
  *         11.10.17
  */
 
-//@State(name = "CommentService")
-class CommentServiceImpl : CommentService {
+open class CommentServiceImpl : CommentService {
     private val logger = Logger.getInstance(CommentServiceImpl::class.java)
 
-    private var state: CommentService.State = CommentService.State(mutableMapOf())
+    protected val comments: MutableMap<VirtualFile, MutableList<Comment>> = mutableMapOf()
 
     override lateinit var toolbarEditor: MyToolbarEditor
     override var currentComment: Comment? = null
-        private set(value) {field = value}
+        protected set(value) {field = value}
 
     override var currentPosition = Position()
         set(value) {
@@ -53,10 +52,10 @@ class CommentServiceImpl : CommentService {
     override fun addNewComment(file: VirtualFile, line: Int) {
         // TODO: переделать генерацию коммента через builder
         val comment: Comment = CommentImpl("", file, line)
-        if (file !in state.comments.keys) {
-            state.comments[file] = mutableListOf()
+        if (file !in comments.keys) {
+            comments[file] = mutableListOf()
         }
-        state.comments[file]?.add(comment)
+        comments[file]?.add(comment)
         currentPosition = Position(file, line)
     }
 
@@ -66,31 +65,21 @@ class CommentServiceImpl : CommentService {
         }
         if (comment.text == "") {
             val file = comment.hook.sourceFile
-            val commentsList = state.comments[file]
+            val commentsList = comments[file]
             if (commentsList == null) {
                 logger.warn("WTF? comment exists but list with comment isn't")
                 return
             }
             commentsList.remove(comment)
             if (commentsList.isEmpty()) {
-                state.comments.remove(file, commentsList)
+                comments.remove(file, commentsList)
             }
             currentComment = null
         }
     }
 
     override fun getForFile(file: VirtualFile): Map<Int, Comment> {
-        val comments = state.comments[file] ?: return mapOf()
+        val comments = this.comments[file] ?: return mapOf()
         return comments.associate { it.hook.line to it }
     }
-
-
-    // Persistence
-//    override fun loadState(state: CommentService.State?) {
-//        this.state = state!!
-//    }
-//
-//    override fun getState(): CommentService.State? {
-//        return state
-//    }
 }

@@ -38,7 +38,7 @@
 
     <projectService
             serviceInterface="com.jetbrains.plugin.idea.nonsource.comments.services.CommentService"
-            serviceImplementation="com.jetbrains.plugin.idea.nonsource.comments.services.CommentServiceImpl"/>
+            serviceImplementation="com.jetbrains.plugin.idea.nonsource.comments.services.PersistentCommentServiceImpl"/>
   </extensions>
 
   <actions>
