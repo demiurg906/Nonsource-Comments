@@ -9,4 +9,4 @@ import com.intellij.openapi.vfs.VirtualFile
  *         15.10.17
  */
 
-fun getFileFromEditor(editor: Editor): VirtualFile? = FileDocumentManager.getInstance().getFile(editor.document)
+fun Editor.currentFile(): VirtualFile? = FileDocumentManager.getInstance().getFile(document)
