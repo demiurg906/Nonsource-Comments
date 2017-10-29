@@ -19,6 +19,9 @@
 
   <project-components>
     <component>
+      <implementation-class>com.jetbrains.plugin.idea.nonsource.comments.components.CommentsState</implementation-class>
+    </component>
+    <component>
       <implementation-class>com.jetbrains.plugin.idea.nonsource.comments.components.CommentInitializer</implementation-class>
     </component>
   </project-components>
@@ -38,7 +41,7 @@
 
     <projectService
             serviceInterface="com.jetbrains.plugin.idea.nonsource.comments.services.CommentService"
-            serviceImplementation="com.jetbrains.plugin.idea.nonsource.comments.services.PersistentCommentServiceImpl"/>
+            serviceImplementation="com.jetbrains.plugin.idea.nonsource.comments.services.CommentServiceImpl"/>
   </extensions>
 
   <actions>

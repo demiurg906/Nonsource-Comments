@@ -2,7 +2,9 @@ package com.jetbrains.plugin.idea.nonsource.comments.services
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.plugin.idea.nonsource.comments.components.CommentsState
 import com.jetbrains.plugin.idea.nonsource.comments.components.MyToolbarEditor
 import com.jetbrains.plugin.idea.nonsource.comments.model.Comment
 import com.jetbrains.plugin.idea.nonsource.comments.model.CommentImpl
@@ -13,10 +15,18 @@ import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService.Posi
  *         11.10.17
  */
 
-open class CommentServiceImpl : CommentService {
+open class CommentServiceImpl(val project: Project) : CommentService {
     private val logger = Logger.getInstance(CommentServiceImpl::class.java)
 
-    protected val comments: MutableMap<VirtualFile, MutableList<Comment>> = mutableMapOf()
+    private val comments: MutableMap<VirtualFile, MutableList<Comment>>
+        get() {
+            val state = project.getComponent(CommentsState::class.java)
+            if (state == null) {
+                logger.error("CommentsState not loaded")
+                throw Exception()
+            }
+            return state.comments
+        }
 
     // TODO: lateinit лучше заменить на null
     // или запихать куда-нибудь создание тулбара
