@@ -4,7 +4,6 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.psi.PsiDocumentManager
@@ -20,27 +19,14 @@ import javax.swing.JComponent
  */
 
 class MyToolbarPanel(project: Project) : SimpleToolWindowPanel(true, false) {
-    val logger = Logger.getInstance(MyToolbarPanel::class.java)
-
     init {
-//        setToolbar(toolbar(project))
-//        val editor = toolbarEditor(project)
         val (editor, component) = toolbar(project)
         CommentService.getInstance(project).toolbarEditor = editor
-//        setToolbar(editor.component)
-//        add(editor.component)
         add(component)
     }
 
-    private fun toolbarEditor(project: Project): MyToolbarEditor {
-        val psiFile  = PsiFileFactory.getInstance(project).createFileFromText(JavaLanguage.INSTANCE, "")
-        val document  = PsiDocumentManager.getInstance(project).getDocument(psiFile)
-        return MyToolbarEditor(document, project, JavaFileType.INSTANCE)
-    }
-
-
-
     private fun toolbar(project: Project): Pair<MyToolbarEditor, JComponent> {
+        // панель,содержащая в себе все, что лежит в тулбаре
         val toolBarPanel = BorderLayoutPanel()
 
         // добавление кнопочек
@@ -50,37 +36,13 @@ class MyToolbarPanel(project: Project) : SimpleToolWindowPanel(true, false) {
         toolBarPanel.addToTop(actionToolbar.component)
 
         // добавление Editor'а
-        // TODO: поменять на MyToolbarEditor
-
         val psiFile = PsiFileFactory.getInstance(project).createFileFromText(
                 JavaLanguage.INSTANCE, ""
         )
         val document = PsiDocumentManager.getInstance(project).getDocument(psiFile)
-
-//        val editorFactory = EditorFactory.getInstance()
-//        val editor = editorFactory.createEditor(document!!, project, EditorKind.MAIN_EDITOR)
-//        editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
-
         val editor = MyToolbarEditor(document, project, JavaFileType.INSTANCE)
-        editor.addSettingsProvider { with(it.settings) {
-            isLineNumbersShown = true
-            isAdditionalPageAtBottom = true
-            isFoldingOutlineShown = true
-            isAnimatedScrolling = true
-            isRefrainFromScrolling = true
-            isRightMarginShown = true
-            isLineMarkerAreaShown = true
-            isSmartHome = true
-            isVirtualSpace = true
-            isCaretRowShown = true
-            isDndEnabled = true
-            isIndentGuidesShown = true
-            isShowIntentionBulb = true
-        } }
 
-        editor.autoscrolls = true
         toolBarPanel.addToCenter(editor.component)
-
         CommentService.getInstance(project).toolbarEditor = editor
 
         return editor to toolBarPanel

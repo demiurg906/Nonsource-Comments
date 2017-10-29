@@ -4,7 +4,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
 import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
-import com.jetbrains.plugin.idea.nonsource.comments.util.getFileFromEditor
+import com.jetbrains.plugin.idea.nonsource.comments.util.currentFile
 
 /**
  * @author demiurg
@@ -18,16 +18,13 @@ import com.jetbrains.plugin.idea.nonsource.comments.util.getFileFromEditor
 class EditorCaretListener : CaretListener {
     private val logger = Logger.getInstance(EditorCaretListener::class.java)
 
-    override fun caretPositionChanged(e: CaretEvent?) {
-        if (e == null) {
-            logger.warn("no editor in caret event")
-            return
-        }
+    override fun caretPositionChanged(e: CaretEvent) {
         if (e.oldPosition.line == e.newPosition.line) {
             // линия не поменялась, коммент обновлять не надо
             return
         }
 
+        // TODO: заменить логи на ?: return
         val project = e.editor.project
         if (project == null) {
             logger.warn("no project in caret event")
@@ -39,7 +36,7 @@ class EditorCaretListener : CaretListener {
             return
         }
         val editor = e.editor
-        val file = getFileFromEditor(editor)
+        val file = editor.currentFile()
         if (file == null) {
             logger.warn("no file in caret event")
             return

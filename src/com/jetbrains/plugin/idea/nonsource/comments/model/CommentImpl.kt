@@ -7,10 +7,10 @@ import com.intellij.openapi.vfs.VirtualFile
  *         11.10.17
  */
 
-class CommentImpl(override var text: String = "",
-                  virtualFile: VirtualFile,
-                  line: Int) : Comment {
-    override val hook: CodeHook = CodeHookImpl(virtualFile, line)
+class CommentImpl(override var text: String = "", override val hook: CodeHook) : Comment {
+    constructor(text: String = "",
+                virtualFile: VirtualFile,
+                line: Int) : this(text, CodeHookImpl(virtualFile, line))
 
     override fun toString(): String {
         return "CommentImpl(${hook.sourceFile.name}:${hook.line} '$text')"

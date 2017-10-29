@@ -34,7 +34,7 @@ interface CommentService {
     /**
      * Delete current comment from map if it's empty
      */
-    fun flush(comment: Comment?)
+    fun deleteEmptyComment(comment: Comment?)
 
     /**
      * Get all comments for file mapped to line number
@@ -49,6 +49,8 @@ interface CommentService {
     /**
      * Active chosen comment
      */
+    // TODO: подумать, можно ли как-то изавиться от глобальных var переменных
+    // можно от него избавиться, если хранить activeEditor
     val currentComment: Comment?
 
     var currentPosition: Position

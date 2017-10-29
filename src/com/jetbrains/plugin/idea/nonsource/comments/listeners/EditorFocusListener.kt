@@ -2,7 +2,7 @@ package com.jetbrains.plugin.idea.nonsource.comments.listeners
 
 import com.intellij.openapi.editor.Editor
 import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
-import com.jetbrains.plugin.idea.nonsource.comments.util.getFileFromEditor
+import com.jetbrains.plugin.idea.nonsource.comments.util.currentFile
 import java.awt.event.FocusEvent
 import java.awt.event.FocusListener
 
@@ -17,7 +17,7 @@ class EditorFocusListener(val editor: Editor) : FocusListener {
             return
         }
         val project = editor.project ?: return
-        val file = getFileFromEditor(editor) ?: return
+        val file = editor.currentFile() ?: return
 
         val commentService = CommentService.getInstance(project)
         commentService.currentPosition = CommentService.Position(file,

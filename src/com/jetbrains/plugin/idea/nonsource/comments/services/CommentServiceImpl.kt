@@ -17,19 +17,21 @@ open class CommentServiceImpl : CommentService {
 
     protected val comments: MutableMap<VirtualFile, MutableList<Comment>> = mutableMapOf()
 
+    // TODO: lateinit лучше заменить на null
+    // или запихать куда-нибудь создание тулбара
     override lateinit var toolbarEditor: MyToolbarEditor
     override var currentComment: Comment? = null
-        protected set(value) {field = value}
+        protected set(value) {
+            field = value
+        }
 
     override var currentPosition = Position()
         set(value) {
             // При обновлении позиции каретки обновляется коммент в тулбаре
             field = value
-            if (value.file == null) {
-                currentComment = null;
-            } else {
+            currentComment = value.file?.let {
                 val comments = getForFile(value.file)
-                currentComment = comments[value.line]
+                comments[value.line]
             }
             try {
                 toolbarEditor.updateDocumentText(currentComment)
@@ -40,13 +42,12 @@ open class CommentServiceImpl : CommentService {
 
     override fun addNewComment() {
         // TODO: надо бы порефакторить эти две функции
-        with(currentPosition) {
-            if (file == null) {
-                logger.warn("current file is null")
-                return
-            }
-            addNewComment(file, line)
+        val file = currentPosition.file
+        if (file == null) {
+            logger.warn("current file is null")
+            return
         }
+        addNewComment(file, currentPosition.line)
     }
 
     override fun addNewComment(file: VirtualFile, line: Int) {
@@ -59,7 +60,7 @@ open class CommentServiceImpl : CommentService {
         currentPosition = Position(file, line)
     }
 
-    override fun flush(comment: Comment?) {
+    override fun deleteEmptyComment(comment: Comment?) {
         if (comment == null) {
             return
         }
@@ -67,6 +68,7 @@ open class CommentServiceImpl : CommentService {
             val file = comment.hook.sourceFile
             val commentsList = comments[file]
             if (commentsList == null) {
+                // TODO: мб лучше заменить на assert
                 logger.warn("WTF? comment exists but list with comment isn't")
                 return
             }

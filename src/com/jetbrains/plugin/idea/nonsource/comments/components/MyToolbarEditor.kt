@@ -65,9 +65,16 @@ class MyToolbarEditor(
 
             override fun focusLost(event: FocusEvent?) {
                 // при потере фокуса трем коммент, если он пустой
-                commentService.flush(currentComment)
+                commentService.deleteEmptyComment(currentComment)
             }
         })
+        addSettingsProvider { with(it.settings) {
+            isLineNumbersShown = true
+            isAdditionalPageAtBottom = true
+            isLineMarkerAreaShown = true
+            isCaretRowShown = true
+            isIndentGuidesShown = true
+        } }
     }
 
     fun updateDocumentText(comment: Comment?) {
