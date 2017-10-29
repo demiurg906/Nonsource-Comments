@@ -1,6 +1,7 @@
 package com.jetbrains.plugin.idea.nonsource.comments.services
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.plugin.idea.nonsource.comments.components.MyToolbarEditor
 import com.jetbrains.plugin.idea.nonsource.comments.model.Comment
@@ -58,6 +59,7 @@ open class CommentServiceImpl : CommentService {
         }
         comments[file]?.add(comment)
         currentPosition = Position(file, line)
+        EditorFactory.getInstance().refreshAllEditors()
     }
 
     override fun deleteEmptyComment(comment: Comment?) {
@@ -78,6 +80,7 @@ open class CommentServiceImpl : CommentService {
             }
             currentComment = null
         }
+        EditorFactory.getInstance().refreshAllEditors()
     }
 
     override fun getForFile(file: VirtualFile): Map<Int, Comment> {
