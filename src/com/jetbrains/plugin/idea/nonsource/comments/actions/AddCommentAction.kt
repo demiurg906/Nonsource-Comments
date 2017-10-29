@@ -19,7 +19,6 @@ import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
  * Вызывается с alt-enter для добавления коммента
  */
 class AddCommentAction : AnAction(), IntentionAction {
-    // TODO: отловить Intention Description Dir URL is null
     companion object {
         const val ID = "Comments.AddCommentAction"
     }
