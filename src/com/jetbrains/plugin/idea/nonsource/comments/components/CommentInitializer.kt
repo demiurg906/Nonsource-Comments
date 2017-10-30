@@ -21,7 +21,7 @@ import java.awt.Cursor
  *         11.10.17
  */
 
-class CommentInitializer(val project: Project) : ProjectComponent, Disposable {
+class CommentInitializer(private val project: Project) : ProjectComponent, Disposable {
     var toolWindow: ToolWindow? = null
 
     override fun initComponent() {

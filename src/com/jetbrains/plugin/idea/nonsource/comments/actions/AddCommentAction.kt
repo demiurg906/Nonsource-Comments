@@ -4,7 +4,6 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataKeys
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
@@ -22,8 +21,6 @@ class AddCommentAction : AnAction(), IntentionAction {
     companion object {
         const val ID = "Comments.AddCommentAction"
     }
-
-    val logger = Logger.getInstance(AddCommentAction::class.java)
 
     override fun getText(): String {
         return "Add comment to this line"

@@ -11,7 +11,7 @@ import java.awt.event.FocusListener
  *         15.10.17
  */
 
-class EditorFocusListener(val editor: Editor) : FocusListener {
+class EditorFocusListener(private val editor: Editor) : FocusListener {
     override fun focusGained(event: FocusEvent) {
         val project = editor.project ?: return
         val file = editor.currentFile() ?: return

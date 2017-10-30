@@ -17,12 +17,14 @@ import org.jdom.Element
 @State(name = "CommentService")
 @Storage("nonsource_comments.xml")
 class CommentsState : ProjectComponent, PersistentStateComponent<Element> {
-    private val COMMENTS_ELEMENT_NAME = "comments"
-    private val FILE_ELEMENT_NAME = "file"
-    private val URL_ATTRIBUTE = "url"
-    private val COMMENT_ELEMENT_NAME = "comment"
-    private val TEXT_ATTRIBUTE = "text"
-    private val LINE_ATTRIBUTE = "line"
+    private companion object {
+        val COMMENTS_ELEMENT_NAME = "comments"
+        val FILE_ELEMENT_NAME = "file"
+        val URL_ATTRIBUTE = "url"
+        val COMMENT_ELEMENT_NAME = "comment"
+        val TEXT_ATTRIBUTE = "text"
+        val LINE_ATTRIBUTE = "line"
+    }
 
     val comments: MutableMap<VirtualFile, MutableList<Comment>> = mutableMapOf()
 

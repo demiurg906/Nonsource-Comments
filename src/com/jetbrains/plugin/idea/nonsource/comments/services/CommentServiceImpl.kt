@@ -15,7 +15,7 @@ import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService.Posi
  *         11.10.17
  */
 
-open class CommentServiceImpl(val project: Project) : CommentService {
+open class CommentServiceImpl(private val project: Project) : CommentService {
     private val logger = Logger.getInstance(CommentServiceImpl::class.java)
 
     private val comments: MutableMap<VirtualFile, MutableList<Comment>>

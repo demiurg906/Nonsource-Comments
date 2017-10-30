@@ -1,6 +1,5 @@
 package com.jetbrains.plugin.idea.nonsource.comments.listeners
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
 import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
@@ -16,8 +15,6 @@ import com.jetbrains.plugin.idea.nonsource.comments.util.currentFile
  * меняет состояние окна с комментами при перемещении курсора
  */
 class EditorCaretListener : CaretListener {
-    private val logger = Logger.getInstance(EditorCaretListener::class.java)
-
     override fun caretPositionChanged(e: CaretEvent) {
         if (e.oldPosition.line == e.newPosition.line) {
             // линия не поменялась, коммент обновлять не надо

@@ -13,7 +13,7 @@ import java.awt.Color
  * @author demiurg
  *         18.10.17
  */
-class CommentGutterAnnotation(val commentService: CommentService) : TextAnnotationGutterProvider {
+class CommentGutterAnnotation(private val commentService: CommentService) : TextAnnotationGutterProvider {
 
     private fun checkData(line: Int, editor: Editor?): Boolean {
         if (editor == null) {
