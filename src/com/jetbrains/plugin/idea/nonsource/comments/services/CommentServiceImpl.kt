@@ -7,7 +7,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.plugin.idea.nonsource.comments.components.CommentsState
 import com.jetbrains.plugin.idea.nonsource.comments.components.MyToolbarEditor
 import com.jetbrains.plugin.idea.nonsource.comments.model.Comment
-import com.jetbrains.plugin.idea.nonsource.comments.model.CommentImpl
 import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService.Position
 
 /**
@@ -62,8 +61,7 @@ open class CommentServiceImpl(val project: Project) : CommentService {
     }
 
     override fun addNewComment(file: VirtualFile, line: Int) {
-        // TODO: переделать генерацию коммента через builder
-        val comment: Comment = CommentImpl("", file, line)
+        val comment = Comment.build("", file, line)
         if (file !in comments.keys) {
             comments[file] = mutableListOf()
         }

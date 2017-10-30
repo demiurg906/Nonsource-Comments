@@ -7,7 +7,6 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.plugin.idea.nonsource.comments.model.Comment
-import com.jetbrains.plugin.idea.nonsource.comments.model.CommentImpl
 import org.jdom.Element
 
 /**
@@ -39,8 +38,7 @@ class CommentsState : ProjectComponent, PersistentStateComponent<Element> {
             for (child in fileNode.children) {
                 val text = child.getAttributeValue(TEXT_ATTRIBUTE) ?: continue
                 val line = child.getAttribute(LINE_ATTRIBUTE).intValue
-                // TODO: переделать через builder
-                comments.add(CommentImpl(text, file, line))
+                comments.add(Comment.build(text, file, line))
             }
             this.comments[file] = comments
         }
