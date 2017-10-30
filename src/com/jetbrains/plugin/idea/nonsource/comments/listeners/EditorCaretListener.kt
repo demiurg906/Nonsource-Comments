@@ -41,18 +41,10 @@ class EditorCaretListener : CaretListener {
             logger.warn("no file in caret event")
             return
         }
-        val commentService = CommentService.getInstance(project)
-
-
-        try {
-            commentService.currentPosition = CommentService.Position(
-                    file,
-                    e.newPosition.line
-            )
-        } catch (e: UninitializedPropertyAccessException) {
-            // если тулбар еще не инициализирован, то ничего не делаем
-            return
-        }
+        CommentService.getInstance(project).currentPosition = CommentService.Position(
+                file,
+                e.newPosition.line
+        )
     }
 }
 

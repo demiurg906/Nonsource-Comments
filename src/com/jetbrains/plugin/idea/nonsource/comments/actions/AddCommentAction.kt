@@ -39,7 +39,7 @@ class AddCommentAction : AnAction(), IntentionAction {
     }
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
-        CommentService.getInstance(project).toolbarEditor.grabFocus()
+        CommentService.getInstance(project).grabFocusToToolbar()
     }
 
     override fun startInWriteAction(): Boolean {
@@ -48,7 +48,6 @@ class AddCommentAction : AnAction(), IntentionAction {
     }
 
     override fun actionPerformed(e: AnActionEvent?) {
-        // TODO: добавить вывод логов
         val project = e?.project ?: return
         val editor = e.getData(DataKeys.EDITOR)
         val file = e.getData(DataKeys.PSI_FILE)

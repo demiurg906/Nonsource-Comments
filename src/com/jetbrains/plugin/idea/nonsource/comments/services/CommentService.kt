@@ -41,10 +41,9 @@ interface CommentService {
      */
     fun getForFile(file: VirtualFile): Map<Int, Comment>
 
-    /**
-     * Active editor in toolbar
-     */
-    var toolbarEditor: MyToolbarEditor
+    fun grabFocusToToolbar()
+
+    fun registerToolbarEditor(toolbarEditor: MyToolbarEditor)
 
     /**
      * Active chosen comment

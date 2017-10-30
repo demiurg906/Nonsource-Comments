@@ -21,7 +21,7 @@ import javax.swing.JComponent
 class MyToolbarPanel(project: Project) : SimpleToolWindowPanel(true, false) {
     init {
         val (editor, component) = toolbar(project)
-        CommentService.getInstance(project).toolbarEditor = editor
+        CommentService.getInstance(project).registerToolbarEditor(editor)
         add(component)
     }
 
@@ -43,7 +43,6 @@ class MyToolbarPanel(project: Project) : SimpleToolWindowPanel(true, false) {
         val editor = MyToolbarEditor(document, project, JavaFileType.INSTANCE)
 
         toolBarPanel.addToCenter(editor.component)
-        CommentService.getInstance(project).toolbarEditor = editor
 
         return editor to toolBarPanel
     }

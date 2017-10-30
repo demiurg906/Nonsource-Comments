@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.plugin.idea.nonsource.comments.components.CommentInitializer
 import com.jetbrains.plugin.idea.nonsource.comments.components.CommentsState
 import com.jetbrains.plugin.idea.nonsource.comments.components.MyToolbarEditor
 import com.jetbrains.plugin.idea.nonsource.comments.model.Comment
@@ -27,9 +28,8 @@ open class CommentServiceImpl(val project: Project) : CommentService {
             return state.comments
         }
 
-    // TODO: lateinit лучше заменить на null
-    // или запихать куда-нибудь создание тулбара
-    override lateinit var toolbarEditor: MyToolbarEditor
+    private var toolbarEditor: MyToolbarEditor? = null
+
     override var currentComment: Comment? = null
         protected set(value) {
             field = value
@@ -43,12 +43,18 @@ open class CommentServiceImpl(val project: Project) : CommentService {
                 val comments = getForFile(value.file)
                 comments[value.line]
             }
-            try {
-                toolbarEditor.updateDocumentText(currentComment)
-            } catch (e: UninitializedPropertyAccessException) {
-                // если тулбар еще не инициализирован, то ничего не делаем
-            }
+            toolbarEditor?.updateDocumentText(currentComment)
         }
+
+    override fun grabFocusToToolbar() {
+        val comp = project.getComponent(CommentInitializer::class.java)
+        val toolWindow = comp.toolWindow ?: return
+        if (!toolWindow.isActive) {
+            toolWindow.activate { toolbarEditor?.grabFocus() }
+            return
+        }
+        toolbarEditor?.grabFocus()
+    }
 
     override fun addNewComment() {
         // TODO: надо бы порефакторить эти две функции
@@ -94,5 +100,9 @@ open class CommentServiceImpl(val project: Project) : CommentService {
     override fun getForFile(file: VirtualFile): Map<Int, Comment> {
         val comments = this.comments[file] ?: return mapOf()
         return comments.associate { it.hook.line to it }
+    }
+
+    override fun registerToolbarEditor(toolbarEditor: MyToolbarEditor) {
+        this.toolbarEditor = toolbarEditor
     }
 }

@@ -8,6 +8,10 @@ import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.event.EditorFactoryEvent
 import com.intellij.openapi.editor.event.EditorFactoryListener
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.ToolWindow
+import com.intellij.openapi.wm.ToolWindowAnchor
+import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.ui.content.ContentFactory
 import com.jetbrains.plugin.idea.nonsource.comments.listeners.EditorCaretListener
 import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
 import java.awt.Cursor
@@ -18,12 +22,28 @@ import java.awt.Cursor
  */
 
 class CommentInitializer(val project: Project) : ProjectComponent, Disposable {
+    var toolWindow: ToolWindow? = null
+
     override fun initComponent() {
-        val state = project.getComponent(CommentsState::class.java)
-        println("hello")
+        project.getComponent(CommentsState::class.java)
     }
 
     override fun projectOpened() {
+        val toolWindow = ToolWindowManager.getInstance(project)
+                .registerToolWindow(
+                        "Comments",
+                        false,
+                        ToolWindowAnchor.LEFT,
+                        true
+                )
+        val contentFactory = ContentFactory.SERVICE.getInstance()
+        val contentManager = toolWindow.contentManager
+        val allFileContent = contentFactory.createContent(MyToolbarPanel(project), "Comments", false)
+        allFileContent.isCloseable = false
+        contentManager.addContent(allFileContent)
+
+        this.toolWindow = toolWindow
+
         EditorFactory.getInstance().addEditorFactoryListener(object : EditorFactoryListener {
             override fun editorCreated(event: EditorFactoryEvent) {
                 val editor = event.editor
@@ -32,15 +52,13 @@ class CommentInitializer(val project: Project) : ProjectComponent, Disposable {
                 // editor.contentComponent.addFocusListener(EditorFocusListener(editor))
 
                 val project = editor.project ?: return
-                // TODO: gutter'у надо говорить, что надо обновить иконки
-                // например, repaint все editor'ы
                 editor.gutter.registerTextAnnotation(CommentGutterAnnotation(CommentService.getInstance(project)),
                         object : EditorGutterAction {
                             val commentService = CommentService.getInstance(project)
 
                             override fun doAction(line: Int) {
                                 editor.caretModel.currentCaret.moveToLogicalPosition(LogicalPosition(line, 0, true))
-                                commentService.toolbarEditor.grabFocus()
+                                commentService.grabFocusToToolbar()
                             }
 
                             override fun getCursor(lineNum: Int): Cursor? {
@@ -55,7 +73,5 @@ class CommentInitializer(val project: Project) : ProjectComponent, Disposable {
         }, this)
     }
 
-    override fun dispose() {
-        // TODO: понять, надо ли что-то делать
-    }
+    override fun dispose() {}
 }
