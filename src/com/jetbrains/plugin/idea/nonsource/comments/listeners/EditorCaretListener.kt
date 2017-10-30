@@ -23,24 +23,9 @@ class EditorCaretListener : CaretListener {
             // линия не поменялась, коммент обновлять не надо
             return
         }
-
-        // TODO: заменить логи на ?: return
-        val project = e.editor.project
-        if (project == null) {
-            logger.warn("no project in caret event")
-            return
-        }
-        val caret = e.caret
-        if (caret == null) {
-            logger.warn("no caret in caret event")
-            return
-        }
+        val project = e.editor.project ?: return
         val editor = e.editor
-        val file = editor.currentFile()
-        if (file == null) {
-            logger.warn("no file in caret event")
-            return
-        }
+        val file = editor.currentFile() ?: return
         CommentService.getInstance(project).currentPosition = CommentService.Position(
                 file,
                 e.newPosition.line

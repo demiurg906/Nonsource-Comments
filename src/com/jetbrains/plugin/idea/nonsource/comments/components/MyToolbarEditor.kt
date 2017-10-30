@@ -33,10 +33,7 @@ class MyToolbarEditor(
 
     init {
         addDocumentListener(object: DocumentListener {
-            override fun documentChanged(event: DocumentEvent?) {
-                if (event == null) {
-                    return
-                }
+            override fun documentChanged(event: DocumentEvent) {
                 val commentService = CommentService.getInstance(project)
                 val comment = currentComment ?: return
                 val line = commentService.currentPosition.line
@@ -53,7 +50,7 @@ class MyToolbarEditor(
         addFocusListener(object : FocusListener {
             val commentService = CommentService.getInstance(project)
 
-            override fun focusGained(event: FocusEvent?) {
+            override fun focusGained(event: FocusEvent) {
                 // при получении фокуса создаем новый пустой коммент
                 with(commentService) {
                     if (currentComment == null) {
@@ -63,7 +60,7 @@ class MyToolbarEditor(
                 currentComment = commentService.currentComment
             }
 
-            override fun focusLost(event: FocusEvent?) {
+            override fun focusLost(event: FocusEvent) {
                 // при потере фокуса трем коммент, если он пустой
                 commentService.deleteEmptyComment(currentComment)
             }

@@ -47,8 +47,8 @@ class AddCommentAction : AnAction(), IntentionAction {
         return true
     }
 
-    override fun actionPerformed(e: AnActionEvent?) {
-        val project = e?.project ?: return
+    override fun actionPerformed(e: AnActionEvent) {
+        val project = e.project ?: return
         val editor = e.getData(DataKeys.EDITOR)
         val file = e.getData(DataKeys.PSI_FILE)
         invoke(project, editor, file)

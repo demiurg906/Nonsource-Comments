@@ -12,10 +12,7 @@ import java.awt.event.FocusListener
  */
 
 class EditorFocusListener(val editor: Editor) : FocusListener {
-    override fun focusGained(event: FocusEvent?) {
-        if (event == null) {
-            return
-        }
+    override fun focusGained(event: FocusEvent) {
         val project = editor.project ?: return
         val file = editor.currentFile() ?: return
 
