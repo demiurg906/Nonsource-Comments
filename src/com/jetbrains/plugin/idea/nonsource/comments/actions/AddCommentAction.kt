@@ -40,8 +40,7 @@ class AddCommentAction : AnAction(), IntentionAction {
     }
 
     override fun startInWriteAction(): Boolean {
-        // TODO: проверить, что именно true
-        return true
+        return false
     }
 
     override fun actionPerformed(e: AnActionEvent) {
