@@ -19,7 +19,8 @@ interface CommentService {
         fun getInstance(project: Project): CommentService = ServiceManager.getService(project, CommentService::class.java)
     }
 
-    data class Position(val file: VirtualFile? = null, val line: Int = 0)
+    // offset is startOffset of RangeMarker
+    data class Position(val file: VirtualFile? = null, val offset: Int = 0)
 
     /**
      * Creates new comment from current position
@@ -29,7 +30,7 @@ interface CommentService {
     /**
      * Creates new comment from given position
      */
-    fun addNewComment(file: VirtualFile, line: Int)
+    fun addNewComment(file: VirtualFile, offset: Int)
 
     /**
      * Delete current comment from map if it's empty
@@ -37,7 +38,7 @@ interface CommentService {
     fun deleteEmptyComment(comment: Comment?)
 
     /**
-     * Get all comments for file mapped to line number
+     * Get all comments for file mapped to start offset
      */
     fun getForFile(file: VirtualFile): Map<Int, Comment>
 

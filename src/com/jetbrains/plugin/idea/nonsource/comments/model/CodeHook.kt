@@ -1,5 +1,6 @@
 package com.jetbrains.plugin.idea.nonsource.comments.model
 
+import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.vfs.VirtualFile
 
 /**
@@ -16,5 +17,6 @@ interface CodeHook {
     /**
      * commented line number
      */
-    val line: Int
+//    val line: Int
+    val rangeMarker: RangeMarker
 }

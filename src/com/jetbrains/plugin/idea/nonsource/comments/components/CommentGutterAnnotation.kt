@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.colors.ColorKey
 import com.intellij.openapi.editor.colors.EditorFontType
 import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
 import com.jetbrains.plugin.idea.nonsource.comments.util.currentFile
+import com.jetbrains.plugin.idea.nonsource.comments.util.startOffset
 import java.awt.Color
 
 /**
@@ -21,7 +22,9 @@ class CommentGutterAnnotation(private val commentService: CommentService) : Text
         }
         val file = editor.currentFile() ?: return false
         val commentsMap = commentService.getForFile(file)
-        return line in commentsMap
+        val offset = editor.startOffset(line)
+        val nextLineOffset = editor.startOffset(line + 1)
+        return commentsMap.keys.any { (offset <= it) and (it < nextLineOffset) }
     }
 
     override fun getPopupActions(line: Int, editor: Editor?): MutableList<AnAction> {

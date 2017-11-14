@@ -1,5 +1,6 @@
 package com.jetbrains.plugin.idea.nonsource.comments.model
 
+import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.vfs.VirtualFile
 
 /**
@@ -8,4 +9,4 @@ import com.intellij.openapi.vfs.VirtualFile
  */
 
 class CodeHookImpl(override val sourceFile: VirtualFile,
-                   override val line: Int) : CodeHook
+                   override val rangeMarker: RangeMarker) : CodeHook

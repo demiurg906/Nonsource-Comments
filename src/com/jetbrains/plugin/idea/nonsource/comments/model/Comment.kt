@@ -12,7 +12,8 @@ import com.intellij.openapi.vfs.VirtualFile
  */
 interface Comment {
     companion object {
-        fun build(text: String, file: VirtualFile, line: Int): Comment = CommentImpl(text, file, line)
+        fun build(text: String, file: VirtualFile, startOffset: Int): Comment =
+                CommentImpl(text, file, startOffset)
     }
     /**
      * text of comment

@@ -23,7 +23,8 @@ class CommentsState : ProjectComponent, PersistentStateComponent<Element> {
         val URL_ATTRIBUTE = "url"
         val COMMENT_ELEMENT_NAME = "comment"
         val TEXT_ATTRIBUTE = "text"
-        val LINE_ATTRIBUTE = "line"
+        val START_OFFSET_ATTRIBUTE = "start_offset"
+//        val END_OFFSET_ATTRIBUTE = "end_offset"
     }
 
     val comments: MutableMap<VirtualFile, MutableList<Comment>> = mutableMapOf()
@@ -39,8 +40,9 @@ class CommentsState : ProjectComponent, PersistentStateComponent<Element> {
             val comments = mutableListOf<Comment>()
             for (child in fileNode.children) {
                 val text = child.getAttributeValue(TEXT_ATTRIBUTE) ?: continue
-                val line = child.getAttribute(LINE_ATTRIBUTE).intValue
-                comments.add(Comment.build(text, file, line))
+                val startOffset = child.getAttribute(START_OFFSET_ATTRIBUTE).intValue
+//                val endOffset = child.getAttribute(END_OFFSET_ATTRIBUTE).intValue
+                comments.add(Comment.build(text, file, startOffset))
             }
             this.comments[file] = comments
         }
@@ -54,7 +56,8 @@ class CommentsState : ProjectComponent, PersistentStateComponent<Element> {
             comments.forEach {
                 fileNode.addContent(Element(COMMENT_ELEMENT_NAME)
                         .setAttribute(TEXT_ATTRIBUTE, it.text)
-                        .setAttribute(LINE_ATTRIBUTE, it.hook.line.toString())
+                        .setAttribute(START_OFFSET_ATTRIBUTE, it.hook.rangeMarker.startOffset.toString())
+//                        .setAttribute(END_OFFSET_ATTRIBUTE, it.hook.rangeMarker.endOffset.toString())
                 )
             }
             state.addContent(fileNode)

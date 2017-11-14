@@ -36,13 +36,13 @@ class MyToolbarEditor(
             override fun documentChanged(event: DocumentEvent) {
                 val commentService = CommentService.getInstance(project)
                 val comment = currentComment ?: return
-                val line = commentService.currentPosition.line
+                val offset = commentService.currentPosition.offset
                 val file = commentService.currentPosition.file
                 if (file == null) {
                     logger.warn("current file is null")
                     return
                 }
-                if (line == comment.hook.line || file != comment.hook.sourceFile) {
+                if (offset == comment.hook.rangeMarker.startOffset || file != comment.hook.sourceFile) {
                     comment.text = event.document.text
                 }
             }

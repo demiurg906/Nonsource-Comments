@@ -41,7 +41,7 @@ open class CommentServiceImpl(private val project: Project) : CommentService {
             field = value
             currentComment = value.file?.let {
                 val comments = getForFile(value.file)
-                comments[value.line]
+                comments[value.offset]
             }
             toolbarEditor?.updateDocumentText(currentComment)
         }
@@ -63,16 +63,16 @@ open class CommentServiceImpl(private val project: Project) : CommentService {
             logger.warn("current file is null")
             return
         }
-        addNewComment(file, currentPosition.line)
+        addNewComment(file, currentPosition.offset)
     }
 
-    override fun addNewComment(file: VirtualFile, line: Int) {
-        val comment = Comment.build("", file, line)
+    override fun addNewComment(file: VirtualFile, offset: Int) {
+        val comment = Comment.build("", file, offset)
         if (file !in comments.keys) {
             comments[file] = mutableListOf()
         }
         comments[file]?.add(comment)
-        currentPosition = Position(file, line)
+        currentPosition = Position(file, offset)
         EditorFactory.getInstance().refreshAllEditors()
     }
 
@@ -84,9 +84,8 @@ open class CommentServiceImpl(private val project: Project) : CommentService {
             val file = comment.hook.sourceFile
             val commentsList = comments[file]
             if (commentsList == null) {
-                // TODO: мб лучше заменить на assert
-                logger.warn("WTF? comment exists but list with comment isn't")
-                return
+                logger.error("WTF? comment exists but list with comment isn't")
+                throw IllegalStateException()
             }
             commentsList.remove(comment)
             if (commentsList.isEmpty()) {
@@ -99,7 +98,7 @@ open class CommentServiceImpl(private val project: Project) : CommentService {
 
     override fun getForFile(file: VirtualFile): Map<Int, Comment> {
         val comments = this.comments[file] ?: return mapOf()
-        return comments.associate { it.hook.line to it }
+        return comments.associate { it.hook.rangeMarker.startOffset to it }
     }
 
     override fun registerToolbarEditor(toolbarEditor: MyToolbarEditor) {
