@@ -1,6 +1,7 @@
 package com.jetbrains.plugin.idea.nonsource.comments.services
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.plugin.idea.nonsource.comments.components.MyToolbarEditor
@@ -47,6 +48,10 @@ interface CommentService {
     fun registerToolbarEditor(toolbarEditor: MyToolbarEditor)
 
     fun deleteAllComments()
+
+    fun setInlay(comment: Comment)
+
+    fun setAllInlays(editor: Editor)
 
     /**
      * Active chosen comment

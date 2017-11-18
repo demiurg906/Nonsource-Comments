@@ -1,6 +1,7 @@
 package com.jetbrains.plugin.idea.nonsource.comments.services
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -75,10 +76,22 @@ open class CommentServiceImpl(private val project: Project) : CommentService {
         }
         comments[file]?.add(comment)
         currentPosition = Position(file, offset)
+        setInlay(comment)
+        EditorFactory.getInstance().refreshAllEditors()
+
+    }
+
+    override fun setInlay(comment: Comment) {
+        val offset = comment.hook.rangeMarker.startOffset
+        val file = comment.hook.sourceFile
         EditorFactory.getInstance().allEditors
                 .filter { it.currentFile() == file }
                 .forEach { it.inlayModel.addInlineElement(offset, InlayCommentRenderer(comment)) }
-        EditorFactory.getInstance().refreshAllEditors()
+    }
+
+    override fun setAllInlays(editor: Editor) {
+        val file = editor.currentFile() ?: return
+        comments[file]?.forEach { editor.inlayModel.addInlineElement(it.hook.rangeMarker.startOffset, InlayCommentRenderer(it)) }
     }
 
     override fun deleteEmptyComment(comment: Comment?) {
