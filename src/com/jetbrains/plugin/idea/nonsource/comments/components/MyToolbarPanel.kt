@@ -10,6 +10,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFileFactory
 import com.intellij.util.ui.components.BorderLayoutPanel
 import com.jetbrains.plugin.idea.nonsource.comments.actions.AddCommentAction
+import com.jetbrains.plugin.idea.nonsource.comments.actions.DeleteCommentsAction
 import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
 import javax.swing.JComponent
 
@@ -32,6 +33,7 @@ class MyToolbarPanel(project: Project) : SimpleToolWindowPanel(true, false) {
         // добавление кнопочек
         val actionGroup = DefaultActionGroup()
         actionGroup.add(ActionManager.getInstance().getAction(AddCommentAction.ID))
+        actionGroup.add(ActionManager.getInstance().getAction(DeleteCommentsAction.ID))
         val actionToolbar = ActionManager.getInstance().createActionToolbar("codeCommentsViewToolbar", actionGroup, true)
         toolBarPanel.addToTop(actionToolbar.component)
 

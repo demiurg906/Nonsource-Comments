@@ -46,6 +46,8 @@ interface CommentService {
 
     fun registerToolbarEditor(toolbarEditor: MyToolbarEditor)
 
+    fun deleteAllComments()
+
     /**
      * Active chosen comment
      */

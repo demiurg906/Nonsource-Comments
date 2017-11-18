@@ -65,6 +65,8 @@ class CommentInitializer(private val project: Project) : ProjectComponent, Dispo
                                 return editor.component.cursor
                             }
                         })
+
+
             }
 
             override fun editorReleased(event: EditorFactoryEvent) {

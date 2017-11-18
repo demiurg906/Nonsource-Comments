@@ -6,9 +6,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.plugin.idea.nonsource.comments.components.CommentInitializer
 import com.jetbrains.plugin.idea.nonsource.comments.components.CommentsState
+import com.jetbrains.plugin.idea.nonsource.comments.components.InlayCommentRenderer
 import com.jetbrains.plugin.idea.nonsource.comments.components.MyToolbarEditor
 import com.jetbrains.plugin.idea.nonsource.comments.model.Comment
 import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService.Position
+import com.jetbrains.plugin.idea.nonsource.comments.util.currentFile
 
 /**
  * @author demiurg
@@ -73,6 +75,9 @@ open class CommentServiceImpl(private val project: Project) : CommentService {
         }
         comments[file]?.add(comment)
         currentPosition = Position(file, offset)
+        EditorFactory.getInstance().allEditors
+                .filter { it.currentFile() == file }
+                .forEach { it.inlayModel.addInlineElement(offset, InlayCommentRenderer(comment)) }
         EditorFactory.getInstance().refreshAllEditors()
     }
 
@@ -103,5 +108,9 @@ open class CommentServiceImpl(private val project: Project) : CommentService {
 
     override fun registerToolbarEditor(toolbarEditor: MyToolbarEditor) {
         this.toolbarEditor = toolbarEditor
+    }
+
+    override fun deleteAllComments() {
+        comments.clear()
     }
 }

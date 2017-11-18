@@ -24,7 +24,7 @@ class CommentGutterAnnotation(private val commentService: CommentService) : Text
         val commentsMap = commentService.getForFile(file)
         val offset = editor.startOffset(line)
         val nextLineOffset = editor.startOffset(line + 1)
-        return commentsMap.keys.any { (offset <= it) and (it < nextLineOffset) }
+        return offset in commentsMap
     }
 
     override fun getPopupActions(line: Int, editor: Editor?): MutableList<AnAction> {
