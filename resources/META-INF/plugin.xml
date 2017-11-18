@@ -44,6 +44,11 @@
             icon="/general/add.png">
       <add-to-group group-id="CodeMenu" anchor="last"/>
     </action>
+    <action id="Comments.DeleteCommentsAction" class="com.jetbrains.plugin.idea.nonsource.comments.actions.DeleteCommentsAction"
+            text="Delete all comments"
+            icon="/general/remove.png">
+      <add-to-group group-id="CodeMenu" anchor="last"/>
+    </action>
   </actions>
 
 </idea-plugin>
