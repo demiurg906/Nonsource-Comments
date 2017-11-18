@@ -52,10 +52,9 @@ class CommentInitializer(private val project: Project) : ProjectComponent, Dispo
                 // editor.contentComponent.addFocusListener(EditorFocusListener(editor))
 
                 val project = editor.project ?: return
+                val commentService = CommentService.getInstance(project)
                 editor.gutter.registerTextAnnotation(CommentGutterAnnotation(CommentService.getInstance(project)),
                         object : EditorGutterAction {
-                            val commentService = CommentService.getInstance(project)
-
                             override fun doAction(line: Int) {
                                 editor.caretModel.currentCaret.moveToLogicalPosition(LogicalPosition(line, 0, true))
                                 commentService.grabFocusToToolbar()
@@ -65,8 +64,7 @@ class CommentInitializer(private val project: Project) : ProjectComponent, Dispo
                                 return editor.component.cursor
                             }
                         })
-
-
+                commentService.setAllInlays(editor)
             }
 
             override fun editorReleased(event: EditorFactoryEvent) {
