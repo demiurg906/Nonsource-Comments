@@ -1,5 +1,6 @@
 package com.jetbrains.plugin.idea.nonsource.comments.model
 
+import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.vfs.VirtualFile
 
 /**
@@ -24,4 +25,6 @@ interface Comment {
      * hook to the commented line
      */
     val hook: CodeHook
+
+    var inlay: Inlay?
 }

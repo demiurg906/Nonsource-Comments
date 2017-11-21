@@ -86,12 +86,14 @@ open class CommentServiceImpl(private val project: Project) : CommentService {
         val file = comment.hook.sourceFile
         EditorFactory.getInstance().allEditors
                 .filter { it.currentFile() == file }
-                .forEach { it.inlayModel.addInlineElement(offset, InlayCommentRenderer(comment)) }
+                .forEach { comment.inlay = it.inlayModel.addInlineElement(offset, InlayCommentRenderer(comment)) }
     }
 
     override fun setAllInlays(editor: Editor) {
         val file = editor.currentFile() ?: return
-        comments[file]?.forEach { editor.inlayModel.addInlineElement(it.hook.rangeMarker.startOffset, InlayCommentRenderer(it)) }
+        val forEach = comments[file]?.forEach {
+            it.inlay = editor.inlayModel.addInlineElement(it.hook.rangeMarker.startOffset, InlayCommentRenderer(it))
+        }
     }
 
     override fun deleteEmptyComment(comment: Comment?) {
@@ -99,6 +101,7 @@ open class CommentServiceImpl(private val project: Project) : CommentService {
             return
         }
         if (comment.text == "") {
+            comment.inlay?.dispose()
             val file = comment.hook.sourceFile
             val commentsList = comments[file]
             if (commentsList == null) {
@@ -124,6 +127,7 @@ open class CommentServiceImpl(private val project: Project) : CommentService {
     }
 
     override fun deleteAllComments() {
+        comments.values.forEach { it.forEach { it.inlay?.dispose() } }
         comments.clear()
     }
 }
