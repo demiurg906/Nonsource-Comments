@@ -1,6 +1,7 @@
 package com.jetbrains.plugin.idea.nonsource.comments.model
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.FileNotFoundException
@@ -17,6 +18,8 @@ class CommentImpl(override var text: String = "",
     // на самом деле плохо (не проинициализируется, если файла нет)
     // добавить везде обработку на NPE?
     override lateinit var hook: CodeHook
+
+    override var inlay: Inlay? = null
 
     init {
         // TODO: мб стоит бросать другое иссключение
