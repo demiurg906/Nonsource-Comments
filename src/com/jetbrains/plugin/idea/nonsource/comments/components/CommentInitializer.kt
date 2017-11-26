@@ -13,6 +13,7 @@ import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.content.ContentFactory
 import com.jetbrains.plugin.idea.nonsource.comments.listeners.EditorCaretListener
+import com.jetbrains.plugin.idea.nonsource.comments.listeners.EditorFocusListener
 import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
 import java.awt.Cursor
 
@@ -49,7 +50,7 @@ class CommentInitializer(private val project: Project) : ProjectComponent, Dispo
                 val editor = event.editor
                 editor.caretModel.addCaretListener(EditorCaretListener())
                 // TODO: надо добавлять listener для всех кроме MyToolBarEditor
-                // editor.contentComponent.addFocusListener(EditorFocusListener(editor))
+                 editor.contentComponent.addFocusListener(EditorFocusListener(editor))
 
                 val project = editor.project ?: return
                 val commentService = CommentService.getInstance(project)

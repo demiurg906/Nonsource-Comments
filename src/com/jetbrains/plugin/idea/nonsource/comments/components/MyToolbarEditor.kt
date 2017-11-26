@@ -65,13 +65,21 @@ class MyToolbarEditor(
     fun updateDocumentText(comment: Comment?) {
         val appManager = ApplicationManager.getApplication()
         appManager.runWriteAction {
-            // TODO: добавить пустые строчки
             try {
                 document = comment?.document ?: emptyDocument()
             } catch (e: IllegalStateException) {
                 logger.error(e)
             }
         }
+    }
+
+    override fun setDocument(document: Document?) {
+        // TODO: попытки исправить фокус
+        // не получилось
+//        transferFocusBackward()
+//        transferFocusUpCycle()
+//        transferFocusDownCycle()
+        super.setDocument(document)
     }
 
     private fun emptyDocument(): Document = EditorFactory.getInstance().createDocument("")
