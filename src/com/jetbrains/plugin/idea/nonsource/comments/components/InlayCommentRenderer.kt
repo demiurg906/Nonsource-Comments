@@ -35,6 +35,12 @@ class InlayCommentRenderer(val comment: Comment) : EditorCustomElementRenderer {
             return
         }
 
+        val lines = comment.text.split("\n")
+        var text = lines[0]
+        if (lines.size > 1) {
+            text += "..."
+        }
+
         val attributes = editor.colorsScheme.getAttributes(DefaultLanguageHighlighterColors.INLINE_PARAMETER_HINT) ?: return
 
         val fontInfo = getFontInfo(editor)
@@ -59,7 +65,7 @@ class InlayCommentRenderer(val comment: Comment) : EditorCustomElementRenderer {
             val savedClip = g.clip
             g.clipRect(r.x + 3, r.y + 2, r.width - 6, r.height - 4)
             val editorAscent = (editor as? EditorImpl)?.ascent ?: 0
-            g.drawString(comment.text, r.x + 7, r.y + Math.max(editorAscent, (r.height + metrics.ascent - metrics.descent) / 2) - 1)
+            g.drawString(text, r.x + 7, r.y + Math.max(editorAscent, (r.height + metrics.ascent - metrics.descent) / 2) - 1)
             g.clip = savedClip
         }
 
