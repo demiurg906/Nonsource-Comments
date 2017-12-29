@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.EditorCustomElementRenderer
 import com.intellij.openapi.editor.impl.ComplementaryFontsRegistry
 import com.intellij.openapi.editor.impl.EditorImpl
 import com.intellij.openapi.editor.impl.FontInfo
+import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.util.ui.GraphicsUtil
 import com.intellij.xdebugger.ui.DebuggerColors
 import com.jetbrains.plugin.idea.nonsource.comments.model.Comment
@@ -30,7 +31,7 @@ class InlayCommentRenderer(val comment: Comment) : EditorCustomElementRenderer {
         }
     }
 
-    override fun paint(editor: Editor, g: Graphics, r: Rectangle) {
+    override fun paint(editor: Editor, g: Graphics, targetRegion: Rectangle, textAttributes: TextAttributes) {
         if (comment.text == "") {
             return
         }
@@ -54,8 +55,8 @@ class InlayCommentRenderer(val comment: Comment) : EditorCustomElementRenderer {
             val config = GraphicsUtil.setupAAPainting(g)
             GraphicsUtil.paintWithAlpha(g, BACKGROUND_ALPHA)
             g.color = backgroundColor
-            val gap = if (r.height < lineHeight + 2) 1 else 2
-            g.fillRoundRect(r.x + 2, r.y + gap, r.width - 4, r.height - gap * 2, 8, 8)
+            val gap = if (targetRegion.height < lineHeight + 2) 1 else 2
+            g.fillRoundRect(targetRegion.x + 2, targetRegion.y + gap, targetRegion.width - 4, targetRegion.height - gap * 2, 8, 8)
             config.restore()
         }
         val foregroundColor = attributes.foregroundColor
@@ -63,9 +64,9 @@ class InlayCommentRenderer(val comment: Comment) : EditorCustomElementRenderer {
             g.color = foregroundColor
             g.font = getFont(editor)
             val savedClip = g.clip
-            g.clipRect(r.x + 3, r.y + 2, r.width - 6, r.height - 4)
+            g.clipRect(targetRegion.x + 3, targetRegion.y + 2, targetRegion.width - 6, targetRegion.height - 4)
             val editorAscent = (editor as? EditorImpl)?.ascent ?: 0
-            g.drawString(text, r.x + 7, r.y + Math.max(editorAscent, (r.height + metrics.ascent - metrics.descent) / 2) - 1)
+            g.drawString(text, targetRegion.x + 7, targetRegion.y + Math.max(editorAscent, (targetRegion.height + metrics.ascent - metrics.descent) / 2) - 1)
             g.clip = savedClip
         }
 
@@ -75,7 +76,7 @@ class InlayCommentRenderer(val comment: Comment) : EditorCustomElementRenderer {
 //        val fontInfo = getFontInfo(editor)
 //        g.font = fontInfo.font
 //        val metrics = fontInfo.fontMetrics()
-//        g.drawString(comment.text, r.x, r.y + metrics.ascent)
+//        g.drawString(comment.text, targetRegion.x, targetRegion.y + metrics.ascent)
     }
 
     override fun calcWidthInPixels(editor: Editor): Int {
