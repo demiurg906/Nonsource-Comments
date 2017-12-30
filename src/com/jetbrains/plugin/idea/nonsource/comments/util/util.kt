@@ -14,6 +14,6 @@ fun Editor.currentFile(): VirtualFile? = FileDocumentManager.getInstance().getFi
 
 fun Editor.currentLineOffset(): Int = startOffset(caretModel.currentCaret.logicalPosition)
 
-fun Editor.startOffset(line: Int): Int = logicalPositionToOffset(LogicalPosition(line + 1, 0)) - 1
+fun Editor.startOffset(line: Int): Int = logicalPositionToOffset(LogicalPosition(line, 0))
 
 fun Editor.startOffset(pos: LogicalPosition): Int = startOffset(pos.line)
