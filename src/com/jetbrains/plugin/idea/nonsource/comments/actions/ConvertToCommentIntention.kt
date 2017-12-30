@@ -13,7 +13,7 @@ import com.jetbrains.plugin.idea.nonsource.comments.util.startOffset
  *         30.12.17
  */
 
-class ConvertToCommentIntention : AbstractIntentionAction() {
+class ConvertToCommentIntention : AbstractIntention() {
     override fun getText(): String {
         return "Convert line/selected to comment"
     }
@@ -22,25 +22,22 @@ class ConvertToCommentIntention : AbstractIntentionAction() {
         val document = editor.document
         val caret = editor.caretModel.currentCaret
         val commentOffset: Int
-        var startOffset: Int
-        var endOffset: Int
+        val startOffset: Int
+        val endOffset: Int
         var text: String
         if (caret.hasSelection()) {
-            text = caret.selectedText ?: return
             startOffset = caret.selectionStart
             endOffset = caret.selectionEnd
             commentOffset = editor.startOffset(caret.selectionStartPosition.line)
+            text = caret.selectedText ?: return
         } else {
             val line = caret.logicalPosition.line
             startOffset = editor.startOffset(line)
-            endOffset = editor.startOffset(line + 1)
-            text = document.getText(TextRange(startOffset, endOffset))
+            endOffset = editor.startOffset(line + 1) - 1
             commentOffset = startOffset
+            text = document.getText(TextRange(startOffset, endOffset))
         }
-        startOffset += text.length - text.trimStart().length
-        endOffset -= text.length - text.trimEnd().length
         text = text.trim()
-
         if (text == "") {
             return
         }

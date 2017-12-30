@@ -10,7 +10,7 @@ import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
  *         30.12.2017
  */
 
-class AddCommentIntention : AbstractIntentionAction() {
+class AddCommentIntention : AbstractIntention() {
     override fun getText(): String {
         return "Add comment to this line"
     }
