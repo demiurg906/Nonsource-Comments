@@ -14,39 +14,13 @@ import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
  *         07.10.17
  */
 
-/**
- * Вызывается с alt-enter для добавления коммента
- */
-class AddCommentAction : AnAction(), IntentionAction {
+class AddCommentAction : AnAction() {
     companion object {
         const val ID = "Comments.AddCommentAction"
     }
 
-    override fun getText(): String {
-        return "Add comment to this line"
-    }
-
-    override fun getFamilyName(): String {
-        return text
-    }
-
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?): Boolean {
-        // TODO: реализовать нормально
-        return true
-    }
-
-    override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
-        CommentService.getInstance(project).grabFocusToToolbar()
-    }
-
-    override fun startInWriteAction(): Boolean {
-        return false
-    }
-
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        val editor = e.getData(DataKeys.EDITOR)
-        val file = e.getData(DataKeys.PSI_FILE)
-        invoke(project, editor, file)
+        AddCommentIntention().invoke(project, null, null)
     }
 }

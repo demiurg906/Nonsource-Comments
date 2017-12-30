@@ -28,7 +28,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <intentionAction>
-      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.AddCommentAction</className>
+      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.AddCommentIntention</className>
       <category>Nonsource comments</category>
       <descriptionDirectoryName>NonsourceComments</descriptionDirectoryName>
     </intentionAction>
