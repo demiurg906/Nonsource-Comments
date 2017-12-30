@@ -28,12 +28,17 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <intentionAction>
-      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.AddCommentIntention</className>
+      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.ConvertToCommentIntention</className>
       <category>Nonsource comments</category>
       <descriptionDirectoryName>NonsourceComments</descriptionDirectoryName>
     </intentionAction>
     <intentionAction>
-      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.ConvertToCommentIntention</className>
+      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.ConvertToCodeIntention</className>
+      <category>Nonsource comments</category>
+      <descriptionDirectoryName>NonsourceComments</descriptionDirectoryName>
+    </intentionAction>
+    <intentionAction>
+      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.AddCommentIntention</className>
       <category>Nonsource comments</category>
       <descriptionDirectoryName>NonsourceComments</descriptionDirectoryName>
     </intentionAction>

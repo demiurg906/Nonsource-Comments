@@ -96,25 +96,31 @@ open class CommentServiceImpl(private val project: Project) : CommentService {
         }
     }
 
+    override fun deleteComment(comment: Comment) {
+        comment.inlay?.dispose()
+        val file = comment.hook.sourceFile
+        val commentsList = comments[file]
+        if (commentsList == null) {
+            logger.error("WTF? comment exists but list with comment isn't")
+            throw IllegalStateException()
+        }
+        commentsList.remove(comment)
+        if (commentsList.isEmpty()) {
+            comments.remove(file, commentsList)
+        }
+        EditorFactory.getInstance().refreshAllEditors()
+        if (comment == currentComment) {
+            currentComment = null
+        }
+    }
+
     override fun deleteEmptyComment(comment: Comment?) {
         if (comment == null) {
             return
         }
         if (comment.text == "") {
-            comment.inlay?.dispose()
-            val file = comment.hook.sourceFile
-            val commentsList = comments[file]
-            if (commentsList == null) {
-                logger.error("WTF? comment exists but list with comment isn't")
-                throw IllegalStateException()
-            }
-            commentsList.remove(comment)
-            if (commentsList.isEmpty()) {
-                comments.remove(file, commentsList)
-            }
-            currentComment = null
+            deleteComment(comment)
         }
-        EditorFactory.getInstance().refreshAllEditors()
     }
 
     override fun getForFile(file: VirtualFile): Map<Int, Comment> {

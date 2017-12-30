@@ -47,6 +47,8 @@ interface CommentService {
 
     fun registerToolbarEditor(toolbarEditor: MyToolbarEditor)
 
+    fun deleteComment(comment: Comment)
+
     fun deleteAllComments()
 
     fun setInlay(comment: Comment)
