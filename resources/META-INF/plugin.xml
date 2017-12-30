@@ -32,6 +32,11 @@
       <category>Nonsource comments</category>
       <descriptionDirectoryName>NonsourceComments</descriptionDirectoryName>
     </intentionAction>
+    <intentionAction>
+      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.ConvertToCommentAction</className>
+      <category>Nonsource comments</category>
+      <descriptionDirectoryName>NonsourceComments</descriptionDirectoryName>
+    </intentionAction>
 
     <projectService
             serviceInterface="com.jetbrains.plugin.idea.nonsource.comments.services.CommentService"
