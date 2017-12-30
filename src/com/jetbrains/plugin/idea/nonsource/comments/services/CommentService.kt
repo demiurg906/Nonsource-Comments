@@ -31,7 +31,7 @@ interface CommentService {
     /**
      * Creates new comment from given position
      */
-    fun addNewComment(file: VirtualFile, offset: Int)
+    fun addNewComment(file: VirtualFile, offset: Int, text: String = "")
 
     /**
      * Delete current comment from map if it's empty

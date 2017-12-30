@@ -69,8 +69,8 @@ open class CommentServiceImpl(private val project: Project) : CommentService {
         addNewComment(file, currentPosition.offset)
     }
 
-    override fun addNewComment(file: VirtualFile, offset: Int) {
-        val comment = Comment.build("", file, offset)
+    override fun addNewComment(file: VirtualFile, offset: Int, text: String) {
+        val comment = Comment.build(text, file, offset)
         if (file !in comments.keys) {
             comments[file] = mutableListOf()
         }
