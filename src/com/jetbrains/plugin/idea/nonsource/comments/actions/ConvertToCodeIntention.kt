@@ -10,7 +10,7 @@ import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
  * @author demiurg
  *         30.12.2017
  */
-class ConvertToCodeIntention : AbstractIntentionAction() {
+class ConvertToCodeIntention : AbstractIntention() {
     override fun getText(): String {
         return "Convert comment to code"
     }

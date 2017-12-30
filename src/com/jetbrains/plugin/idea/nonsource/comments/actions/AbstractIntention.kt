@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile
  *         30.12.2017
  */
 
-abstract class AbstractIntentionAction : IntentionAction {
+abstract class AbstractIntention : IntentionAction {
     override fun getFamilyName(): String {
         return "Nonsource comments"
     }
