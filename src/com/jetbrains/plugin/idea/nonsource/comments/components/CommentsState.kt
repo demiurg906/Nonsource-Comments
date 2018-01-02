@@ -1,13 +1,21 @@
 package com.jetbrains.plugin.idea.nonsource.comments.components
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.MessageType
+import com.intellij.openapi.ui.popup.Balloon
+import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.wm.WindowManager
+import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.plugin.idea.nonsource.comments.model.Comment
 import org.jdom.Element
+
 
 /**
  * @author demiurg
@@ -16,7 +24,7 @@ import org.jdom.Element
 
 @State(name = "CommentService")
 @Storage("nonsource_comments.xml")
-class CommentsState : ProjectComponent, PersistentStateComponent<Element> {
+class CommentsState(private val project: Project) : ProjectComponent, PersistentStateComponent<Element> {
     private companion object {
         val COMMENTS_ELEMENT_NAME = "comments"
         val FILE_ELEMENT_NAME = "file"
@@ -50,10 +58,19 @@ class CommentsState : ProjectComponent, PersistentStateComponent<Element> {
                     println("incorrect lines:")
                     println("old line: $oldLine")
                     println("new line: $currentLine")
+
                 }
                 comments.add(Comment.build(text, file, offset))
             }
             this.comments[file] = comments
+        }
+        // TODO: не работает, надо запускать, когда все загрузилось
+        ApplicationManager.getApplication().invokeLater {
+            val statusBar = WindowManager.getInstance().getStatusBar(project)
+            val popup = JBPopupFactory.getInstance()
+                    .createHtmlTextBalloonBuilder("hello", MessageType.WARNING, null)
+                    .createBalloon()
+            popup.show(RelativePoint.getSouthEastOf(statusBar.component), Balloon.Position.atRight)
         }
     }
 
