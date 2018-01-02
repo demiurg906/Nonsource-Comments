@@ -24,7 +24,7 @@ class CommentsState : ProjectComponent, PersistentStateComponent<Element> {
         val COMMENT_ELEMENT_NAME = "comment"
         val TEXT_ATTRIBUTE = "text"
         val START_OFFSET_ATTRIBUTE = "start_offset"
-//        val END_OFFSET_ATTRIBUTE = "end_offset"
+        val LINE_HASH = "line_hash"
     }
 
     val comments: MutableMap<VirtualFile, MutableList<Comment>> = mutableMapOf()
@@ -37,12 +37,21 @@ class CommentsState : ProjectComponent, PersistentStateComponent<Element> {
         for (fileNode in state.children) {
             val url = fileNode.getAttributeValue(URL_ATTRIBUTE) ?: continue
             val file = vfsManager.findFileByUrl(url) ?: continue
+            val currentLines = MyFileReader(file)
             val comments = mutableListOf<Comment>()
             for (child in fileNode.children) {
                 val text = child.getAttributeValue(TEXT_ATTRIBUTE) ?: continue
-                val startOffset = child.getAttribute(START_OFFSET_ATTRIBUTE).intValue
-//                val endOffset = child.getAttribute(END_OFFSET_ATTRIBUTE).intValue
-                comments.add(Comment.build(text, file, startOffset))
+                val offset = child.getAttribute(START_OFFSET_ATTRIBUTE).intValue
+                val oldLine = child.getAttributeValue(LINE_HASH)
+                // TODO: add exception handler
+                val currentLine = currentLines.lineByOffset(offset)
+                // TODO: change to normal handler
+                if (oldLine != currentLine) {
+                    println("incorrect lines:")
+                    println("old line: $oldLine")
+                    println("new line: $currentLine")
+                }
+                comments.add(Comment.build(text, file, offset))
             }
             this.comments[file] = comments
         }
@@ -53,15 +62,52 @@ class CommentsState : ProjectComponent, PersistentStateComponent<Element> {
         this.comments.forEach {file, comments ->
             val fileNode = Element(FILE_ELEMENT_NAME)
             fileNode.setAttribute(URL_ATTRIBUTE, file.url)
+            val lines = MyFileReader(file)
             comments.forEach {
+                val offset = it.hook.rangeMarker.startOffset
                 fileNode.addContent(Element(COMMENT_ELEMENT_NAME)
                         .setAttribute(TEXT_ATTRIBUTE, it.text)
-                        .setAttribute(START_OFFSET_ATTRIBUTE, it.hook.rangeMarker.startOffset.toString())
-//                        .setAttribute(END_OFFSET_ATTRIBUTE, it.hook.rangeMarker.endOffset.toString())
+                        .setAttribute(START_OFFSET_ATTRIBUTE, offset.toString())
+                        .setAttribute(LINE_HASH, lines.lineByOffset(offset))
                 )
             }
             state.addContent(fileNode)
         }
         return state
     }
+
+    private class MyFileReader(file: VirtualFile) {
+        // line number -> offset of start line
+        private val offsets: List<Int>
+        // line number -> hash (line)
+        private val lines: Map<Int, String>
+        // length of file
+        private val length: Int
+
+        init {
+            val offsets = mutableListOf<Int>()
+            val lines = mutableMapOf<Int, String>()
+            var offset = 0
+            val lineSeparatorLength = file.detectedLineSeparator?.length ?: 1
+            file.inputStream.bufferedReader().useLines { fileLines ->
+                fileLines.forEachIndexed { i, line ->
+                    offsets.add(offset)
+                    offset += line.length + lineSeparatorLength
+                    lines[i] = line
+                }
+            }
+            this.offsets = offsets
+            this.lines = lines
+            this.length = offset
+        }
+
+        fun lineByOffset(offset: Int): String {
+            if (offset > length) {
+                throw IllegalArgumentException("length of file is $length, and offset is $offset")
+            }
+            val line = offsets.indexOfLast { it <= offset }
+            return lines[line]!!
+        }
+    }
+
 }
