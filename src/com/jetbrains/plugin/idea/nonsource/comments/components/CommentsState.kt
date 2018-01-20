@@ -5,6 +5,7 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
@@ -15,6 +16,7 @@ import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.plugin.idea.nonsource.comments.model.Comment
 import org.jdom.Element
+import javax.swing.event.HyperlinkEvent
 
 
 /**
@@ -35,12 +37,24 @@ class CommentsState(private val project: Project) : ProjectComponent, Persistent
         val LINE_HASH = "line_hash"
     }
 
+    data class Conflict(
+            val commentText: String,
+            val file: VirtualFile,
+            val lineNumber: Int,
+            val oldLine: String,
+            val newLine: String
+    )
+
+    private val logger = Logger.getInstance(CommentsState::class.java)
+
     val comments: MutableMap<VirtualFile, MutableList<Comment>> = mutableMapOf()
 
     override fun loadState(state: Element?) {
         if (state == null) {
             return
         }
+
+        val conflicts = mutableListOf<Conflict>()
         val vfsManager = VirtualFileManager.getInstance()
         for (fileNode in state.children) {
             val url = fileNode.getAttributeValue(URL_ATTRIBUTE) ?: continue
@@ -52,26 +66,54 @@ class CommentsState(private val project: Project) : ProjectComponent, Persistent
                 val offset = child.getAttribute(START_OFFSET_ATTRIBUTE).intValue
                 val oldLine = child.getAttributeValue(LINE_HASH)
                 // TODO: add exception handler
-                val currentLine = currentLines.lineByOffset(offset)
+                val (currentLine, lineNumber) = currentLines.lineByOffset(offset)
                 // TODO: change to normal handler
                 if (oldLine != currentLine) {
-                    println("incorrect lines:")
-                    println("old line: $oldLine")
-                    println("new line: $currentLine")
-
+                    conflicts.add(Conflict(text, file, lineNumber, oldLine, currentLine))
                 }
                 comments.add(Comment.build(text, file, offset))
             }
             this.comments[file] = comments
         }
-        // TODO: не работает, надо запускать, когда все загрузилось
-        ApplicationManager.getApplication().invokeLater {
-            val statusBar = WindowManager.getInstance().getStatusBar(project)
-            val popup = JBPopupFactory.getInstance()
-                    .createHtmlTextBalloonBuilder("hello", MessageType.WARNING, null)
-                    .createBalloon()
-            popup.show(RelativePoint.getSouthEastOf(statusBar.component), Balloon.Position.atRight)
+        showConflictsBalloon(conflicts)
+    }
+
+    private fun showConflictsBalloon(conflicts: List<Conflict>) {
+        if (conflicts.isEmpty()) {
+            return
         }
+        conflicts.forEach {
+            println("Conflict:")
+            println("${it.file}:${it.lineNumber}")
+            println("old line: ${it.oldLine}")
+            println("new line: ${it.newLine}")
+        }
+
+        fun showBalloon() {
+            // грязный хак, но это работает
+            if (!project.isInitialized) {
+                ApplicationManager.getApplication().invokeLater { showBalloon() }
+                return
+            }
+            val statusBar = WindowManager.getInstance().getStatusBar(project)
+            val body = "Your file(s) with comments has been changed.\n" +
+                    "<a href=\"see\">See conflicts</a>"
+            val balloon = JBPopupFactory.getInstance()
+                    .createHtmlTextBalloonBuilder(body, MessageType.WARNING, { e: HyperlinkEvent ->
+                        if (e.description != "see") {
+                            logger.error("Undefined html action: ${e.description}")
+                            return@createHtmlTextBalloonBuilder
+                        }
+                        // TODO: implement diff window
+                        println("opening diff window")
+                    })
+                    .setTitle("Conflicts in comments")
+                    .setHideOnLinkClick(true)
+                    .createBalloon()
+            balloon.show(RelativePoint.getSouthEastOf(statusBar.component), Balloon.Position.atRight)
+        }
+
+        showBalloon()
     }
 
     override fun getState(): Element? {
@@ -85,7 +127,7 @@ class CommentsState(private val project: Project) : ProjectComponent, Persistent
                 fileNode.addContent(Element(COMMENT_ELEMENT_NAME)
                         .setAttribute(TEXT_ATTRIBUTE, it.text)
                         .setAttribute(START_OFFSET_ATTRIBUTE, offset.toString())
-                        .setAttribute(LINE_HASH, lines.lineByOffset(offset))
+                        .setAttribute(LINE_HASH, lines.lineByOffset(offset).first)
                 )
             }
             state.addContent(fileNode)
@@ -118,12 +160,12 @@ class CommentsState(private val project: Project) : ProjectComponent, Persistent
             this.length = offset
         }
 
-        fun lineByOffset(offset: Int): String {
+        fun lineByOffset(offset: Int): Pair<String, Int> {
             if (offset > length) {
                 throw IllegalArgumentException("length of file is $length, and offset is $offset")
             }
             val line = offsets.indexOfLast { it <= offset }
-            return lines[line]!!
+            return lines[line]!! to line
         }
     }
 
