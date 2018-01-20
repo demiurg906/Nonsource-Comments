@@ -1,5 +1,8 @@
 package com.jetbrains.plugin.idea.nonsource.comments.components
 
+import com.intellij.diff.DiffContentFactory
+import com.intellij.diff.DiffManager
+import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ProjectComponent
@@ -98,14 +101,25 @@ class CommentsState(private val project: Project) : ProjectComponent, Persistent
             val statusBar = WindowManager.getInstance().getStatusBar(project)
             val body = "Your file(s) with comments has been changed.\n" +
                     "<a href=\"see\">See conflicts</a>"
+            // TODO: при первом нажатии эвент срабатывает два раза
             val balloon = JBPopupFactory.getInstance()
                     .createHtmlTextBalloonBuilder(body, MessageType.WARNING, { e: HyperlinkEvent ->
                         if (e.description != "see") {
                             logger.error("Undefined html action: ${e.description}")
                             return@createHtmlTextBalloonBuilder
                         }
-                        // TODO: implement diff window
-                        println("opening diff window")
+                        val factory = DiffContentFactory.getInstance()
+                        conflicts.forEach {
+                            DiffManager.getInstance().showDiff(
+                                    project,
+                                    SimpleDiffRequest(
+                                            "Comments conflict",
+                                            factory.create(it.oldLine),
+                                            factory.create(it.newLine),
+                                            "Old line",
+                                            "New line"
+                                    ))
+                        }
                     })
                     .setTitle("Conflicts in comments")
                     .setHideOnLinkClick(true)
