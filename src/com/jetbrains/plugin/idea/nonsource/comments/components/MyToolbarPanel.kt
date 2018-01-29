@@ -41,9 +41,7 @@ class MyToolbarPanel(project: Project) : SimpleToolWindowPanel(true, false) {
 
         // добавление Editor'а
         val (language, fileType) = findFileType()
-        val psiFile = PsiFileFactory.getInstance(project).createFileFromText(
-                language, ""
-        )
+        val psiFile = PsiFileFactory.getInstance(project).createFileFromText(language, "")
         val document = PsiDocumentManager.getInstance(project).getDocument(psiFile)
         val editor = MyToolbarEditor(document, project, fileType)
 
