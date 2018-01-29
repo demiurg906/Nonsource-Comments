@@ -1,9 +1,11 @@
 package com.jetbrains.plugin.idea.nonsource.comments.components
 
-import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.lang.java.JavaLanguage
+import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.fileTypes.PlainTextFileType
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.psi.PsiDocumentManager
@@ -38,15 +40,22 @@ class MyToolbarPanel(project: Project) : SimpleToolWindowPanel(true, false) {
         toolBarPanel.addToTop(actionToolbar.component)
 
         // добавление Editor'а
+        val (language, fileType) = findFileType()
         val psiFile = PsiFileFactory.getInstance(project).createFileFromText(
-                JavaLanguage.INSTANCE, ""
+                language, ""
         )
         val document = PsiDocumentManager.getInstance(project).getDocument(psiFile)
-        val editor = MyToolbarEditor(document, project, JavaFileType.INSTANCE)
+        val editor = MyToolbarEditor(document, project, fileType)
 
         toolBarPanel.addToCenter(editor.component)
 
         return editor to toolBarPanel
     }
 
+
+    private fun findFileType(): Pair<Language, FileType> {
+        val language = Language.findLanguageByID("Markdown") ?: PlainTextLanguage.INSTANCE
+        val fileType = language.associatedFileType ?: PlainTextFileType.INSTANCE
+        return language to fileType
+    }
 }
