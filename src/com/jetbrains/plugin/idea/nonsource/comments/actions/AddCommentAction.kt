@@ -9,6 +9,7 @@ import com.jetbrains.plugin.idea.nonsource.comments.actions.intentions.AddCommen
  *         07.10.17
  */
 
+@Deprecated("class will be removed soon")
 class AddCommentAction : AnAction() {
     companion object {
         const val ID = "Comments.AddCommentAction"
