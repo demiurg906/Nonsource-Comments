@@ -1,21 +1,20 @@
 <idea-plugin>
-  <id>com.your.company.unique.plugin.id</id>
-  <name>Plugin display name here</name>
+  <id>com.jetbrains.plugin.idea.nonsource.comments</id>
+  <name>Nonsource comments</name>
   <version>1.0</version>
-  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+  <vendor email="novodmit.2x@yandex.ru">Dmitriy Novozhilov</vendor>
 
   <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+      That plugin allows use comments that not saves into source code.<br>
+      Almost all actions allowed from intentions into source code editor.
     ]]></description>
 
   <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
+      1.0 Plugin released.
     ]]>
   </change-notes>
 
-  <idea-version since-build="145.0"/>
+  <idea-version since-build="147.4127.27"/>
 
   <project-components>
     <component>
@@ -49,11 +48,6 @@
   </extensions>
 
   <actions>
-    <action id="Comments.AddCommentAction" class="com.jetbrains.plugin.idea.nonsource.comments.actions.AddCommentAction"
-            text="Add comment"
-            icon="/general/add.png">
-      <add-to-group group-id="CodeMenu" anchor="last"/>
-    </action>
     <action id="Comments.DeleteAllCommentsAction" class="com.jetbrains.plugin.idea.nonsource.comments.actions.DeleteAllCommentsAction"
             text="Delete all comments"
             icon="/general/remove.png">
