@@ -38,11 +38,6 @@
       <descriptionDirectoryName>NonsourceComments</descriptionDirectoryName>
     </intentionAction>
     <intentionAction>
-      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.intentions.AddCommentIntention</className>
-      <category>Nonsource comments</category>
-      <descriptionDirectoryName>NonsourceComments</descriptionDirectoryName>
-    </intentionAction>
-    <intentionAction>
       <className>com.jetbrains.plugin.idea.nonsource.comments.actions.intentions.DeleteCommentIntention</className>
       <category>Nonsource commetns</category>
       <descriptionDirectoryName>NonsourceComments</descriptionDirectoryName>

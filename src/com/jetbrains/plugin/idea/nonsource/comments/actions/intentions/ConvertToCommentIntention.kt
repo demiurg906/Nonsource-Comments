@@ -14,9 +14,7 @@ import com.jetbrains.plugin.idea.nonsource.comments.util.startOffset
  */
 
 class ConvertToCommentIntention : AbstractIntention() {
-    override fun getText(): String {
-        return "Convert line/selected to comment"
-    }
+    override fun getText(): String = "Convert line/selected to comment"
 
     override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
         return super.isAvailable(project, editor, file) && !isCommentedLine(project, editor, file)

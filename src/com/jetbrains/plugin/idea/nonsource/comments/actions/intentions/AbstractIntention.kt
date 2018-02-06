@@ -12,9 +12,7 @@ import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
  */
 
 abstract class AbstractIntention : IntentionAction {
-    override fun getFamilyName(): String {
-        return "Nonsource comments"
-    }
+    override fun getFamilyName(): String = "Nonsource comments"
 
     override fun startInWriteAction(): Boolean {
         return false

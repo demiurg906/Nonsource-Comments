@@ -10,6 +10,7 @@ import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
  *         30.12.2017
  */
 
+@Deprecated("class will be removed soon")
 class AddCommentIntention : AbstractIntention() {
     override fun getText(): String = "Add comment to this line"
 

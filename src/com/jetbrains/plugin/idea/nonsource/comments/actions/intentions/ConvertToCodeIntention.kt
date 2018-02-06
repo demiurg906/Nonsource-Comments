@@ -11,9 +11,7 @@ import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
  *         30.12.2017
  */
 class ConvertToCodeIntention : AbstractIntention() {
-    override fun getText(): String {
-        return "Convert comment to code"
-    }
+    override fun getText(): String = "Convert comment to code"
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile) {
         val caret = editor.caretModel.currentCaret
