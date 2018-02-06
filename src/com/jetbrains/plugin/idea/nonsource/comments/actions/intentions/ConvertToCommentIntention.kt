@@ -30,7 +30,7 @@ class ConvertToCommentIntention : AbstractIntention() {
         if (caret.hasSelection()) {
             startOffset = caret.selectionStart
             endOffset = caret.selectionEnd
-            commentOffset = editor.startOffset(caret.selectionStartPosition.line)
+            commentOffset = editor.startOffset(editor.visualToLogicalPosition(caret.selectionStartPosition).line)
             text = caret.selectedText ?: return
         } else {
             val line = caret.logicalPosition.line
