@@ -1,13 +1,8 @@
 package com.jetbrains.plugin.idea.nonsource.comments.actions
 
-import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DataKeys
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
-import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
+import com.jetbrains.plugin.idea.nonsource.comments.actions.intentions.AddCommentIntention
 
 /**
  * @author demiurg

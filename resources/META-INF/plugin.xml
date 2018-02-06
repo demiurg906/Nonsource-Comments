@@ -28,18 +28,23 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <intentionAction>
-      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.ConvertToCommentIntention</className>
+      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.intentions.ConvertToCommentIntention</className>
       <category>Nonsource comments</category>
       <descriptionDirectoryName>NonsourceComments</descriptionDirectoryName>
     </intentionAction>
     <intentionAction>
-      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.ConvertToCodeIntention</className>
+      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.intentions.ConvertToCodeIntention</className>
       <category>Nonsource comments</category>
       <descriptionDirectoryName>NonsourceComments</descriptionDirectoryName>
     </intentionAction>
     <intentionAction>
-      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.AddCommentIntention</className>
+      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.intentions.AddCommentIntention</className>
       <category>Nonsource comments</category>
+      <descriptionDirectoryName>NonsourceComments</descriptionDirectoryName>
+    </intentionAction>
+    <intentionAction>
+      <className>com.jetbrains.plugin.idea.nonsource.comments.actions.intentions.DeleteCommentIntention</className>
+      <category>Nonsource commetns</category>
       <descriptionDirectoryName>NonsourceComments</descriptionDirectoryName>
     </intentionAction>
 
@@ -54,7 +59,7 @@
             icon="/general/add.png">
       <add-to-group group-id="CodeMenu" anchor="last"/>
     </action>
-    <action id="Comments.DeleteCommentsAction" class="com.jetbrains.plugin.idea.nonsource.comments.actions.DeleteCommentsAction"
+    <action id="Comments.DeleteAllCommentsAction" class="com.jetbrains.plugin.idea.nonsource.comments.actions.DeleteAllCommentsAction"
             text="Delete all comments"
             icon="/general/remove.png">
       <add-to-group group-id="CodeMenu" anchor="last"/>

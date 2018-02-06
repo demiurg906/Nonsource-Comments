@@ -1,4 +1,4 @@
-package com.jetbrains.plugin.idea.nonsource.comments.actions
+package com.jetbrains.plugin.idea.nonsource.comments.actions.intentions
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
@@ -16,6 +16,10 @@ import com.jetbrains.plugin.idea.nonsource.comments.util.startOffset
 class ConvertToCommentIntention : AbstractIntention() {
     override fun getText(): String {
         return "Convert line/selected to comment"
+    }
+
+    override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
+        return super.isAvailable(project, editor, file) && !isCommentedLine(project, editor, file)
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile) {

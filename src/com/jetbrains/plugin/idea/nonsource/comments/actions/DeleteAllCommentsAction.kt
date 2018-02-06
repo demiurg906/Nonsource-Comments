@@ -8,9 +8,9 @@ import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
  * @author demiurg
  *         14.11.17
  */
-class DeleteCommentsAction : AnAction() {
+class DeleteAllCommentsAction : AnAction() {
     companion object {
-        const val ID = "Comments.DeleteCommentsAction"
+        const val ID = "Comments.DeleteAllCommentsAction"
     }
 
     override fun actionPerformed(e: AnActionEvent) {

@@ -1,9 +1,10 @@
-package com.jetbrains.plugin.idea.nonsource.comments.actions
+package com.jetbrains.plugin.idea.nonsource.comments.actions.intentions
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import com.jetbrains.plugin.idea.nonsource.comments.services.CommentService
 
 /**
  * @author demiurg
@@ -20,7 +21,11 @@ abstract class AbstractIntention : IntentionAction {
     }
 
     override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
-        // TODO: мб стоит прочекать, что ничего не грузится
         return file.virtualFile.exists()
+    }
+
+    fun isCommentedLine(project: Project, editor: Editor, file: PsiFile): Boolean {
+        val comment = CommentService.getInstance(project).currentComment
+        return comment != null
     }
 }
