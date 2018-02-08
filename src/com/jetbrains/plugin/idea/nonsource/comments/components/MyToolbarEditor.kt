@@ -59,6 +59,7 @@ class MyToolbarEditor(
             isLineMarkerAreaShown = true
             isCaretRowShown = true
             isIndentGuidesShown = true
+            isUseSoftWraps = true
         } }
     }
 
@@ -71,15 +72,6 @@ class MyToolbarEditor(
                 logger.error(e)
             }
         }
-    }
-
-    override fun setDocument(document: Document?) {
-        // TODO: попытки исправить фокус
-        // не получилось
-//        transferFocusBackward()
-//        transferFocusUpCycle()
-//        transferFocusDownCycle()
-        super.setDocument(document)
     }
 
     private fun emptyDocument(): Document = EditorFactory.getInstance().createDocument("")
