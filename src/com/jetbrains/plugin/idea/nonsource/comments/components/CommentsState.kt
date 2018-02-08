@@ -31,13 +31,13 @@ import javax.swing.event.HyperlinkEvent
 @Storage("nonsource_comments.xml")
 class CommentsState(private val project: Project) : ProjectComponent, PersistentStateComponent<Element> {
     private companion object {
-        val COMMENTS_ELEMENT_NAME = "comments"
-        val FILE_ELEMENT_NAME = "file"
-        val URL_ATTRIBUTE = "url"
-        val COMMENT_ELEMENT_NAME = "comment"
-        val TEXT_ATTRIBUTE = "text"
-        val START_OFFSET_ATTRIBUTE = "start_offset"
-        val LINE_HASH = "line_hash"
+        const val COMMENTS_ELEMENT_NAME = "comments"
+        const val FILE_ELEMENT_NAME = "file"
+        const val URL_ATTRIBUTE = "url"
+        const val COMMENT_ELEMENT_NAME = "comment"
+        const val TEXT_ATTRIBUTE = "text"
+        const val START_OFFSET_ATTRIBUTE = "start_offset"
+        const val LINE_HASH = "line_hash"
     }
 
     data class Conflict(
