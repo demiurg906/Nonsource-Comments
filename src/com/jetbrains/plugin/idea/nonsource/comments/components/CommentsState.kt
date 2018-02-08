@@ -163,7 +163,9 @@ class CommentsState(private val project: Project) : ProjectComponent, Persistent
             val offsets = mutableListOf<Int>()
             val lines = mutableMapOf<Int, String>()
             var offset = 0
-            val lineSeparatorLength = file.detectedLineSeparator?.length ?: 1
+            // TODO: fix platform-dependent constant
+            val lineSeparatorLength = file.detectedLineSeparator?.length ?: 2
+
             file.inputStream.bufferedReader().useLines { fileLines ->
                 fileLines.forEachIndexed { i, line ->
                     offsets.add(offset)
@@ -180,7 +182,7 @@ class CommentsState(private val project: Project) : ProjectComponent, Persistent
             if (offset > length) {
                 throw IllegalArgumentException("length of file is $length, and offset is $offset")
             }
-            val line = offsets.indexOfLast { it <= offset }
+            val line = offsets.indexOfFirst { it > offset }
             return lines[line]!! to line
         }
     }
