@@ -57,26 +57,46 @@ class CommentsState(private val project: Project) : ProjectComponent, Persistent
             return
         }
 
-        val conflicts = mutableListOf<Conflict>()
         val vfsManager = VirtualFileManager.getInstance()
-        for (fileNode in state.children) {
+        val nodes = state.children
+        for (fileNode in nodes) {
             val url = fileNode.getAttributeValue(URL_ATTRIBUTE) ?: continue
             val file = vfsManager.findFileByUrl(url) ?: continue
-            val currentLines = MyFileReader(file)
             val comments = mutableListOf<Comment>()
             for (child in fileNode.children) {
                 val text = child.getAttributeValue(TEXT_ATTRIBUTE) ?: continue
                 val offset = child.getAttribute(START_OFFSET_ATTRIBUTE).intValue
-                val oldLine = child.getAttributeValue(LINE_HASH)
-                // TODO: add exception handler
-                val (currentLine, lineNumber) = currentLines.lineByOffset(offset)
-                // TODO: change to normal handler
-                if (oldLine != currentLine) {
-                    conflicts.add(Conflict(text, file, lineNumber, oldLine, currentLine))
-                }
                 comments.add(Comment.build(text, file, offset))
             }
             this.comments[file] = comments
+        }
+        checkHashes(nodes)
+    }
+
+    private fun checkHashes(nodes: List<Element>) {
+        if (!project.isInitialized) {
+            ApplicationManager.getApplication().invokeLater { checkHashes(nodes) }
+            return
+        }
+        val conflicts = mutableListOf<Conflict>()
+        val vfsManager = VirtualFileManager.getInstance()
+        for (fileNode in nodes) {
+            val url = fileNode.getAttributeValue(URL_ATTRIBUTE) ?: continue
+            val file = vfsManager.findFileByUrl(url) ?: continue
+            val currentLines = MyFileReader(file)
+            for (child in fileNode.children) {
+                val text = child.getAttributeValue(TEXT_ATTRIBUTE) ?: continue
+                val offset = child.getAttribute(START_OFFSET_ATTRIBUTE).intValue
+                val oldLine = child.getAttributeValue(LINE_HASH)
+                try {
+                    val (currentLine, lineNumber) = currentLines.lineByOffset(offset)
+                    if (oldLine != currentLine) {
+                        conflicts.add(Conflict(text, file, lineNumber, oldLine, currentLine))
+                    }
+                } catch (e: Exception) {
+                    logger.error(e)
+                }
+            }
         }
         showConflictsBalloon(conflicts)
     }
@@ -93,7 +113,6 @@ class CommentsState(private val project: Project) : ProjectComponent, Persistent
         }
 
         fun showBalloon() {
-            // грязный хак, но это работает
             if (!project.isInitialized) {
                 ApplicationManager.getApplication().invokeLater { showBalloon() }
                 return
@@ -163,8 +182,7 @@ class CommentsState(private val project: Project) : ProjectComponent, Persistent
             val offsets = mutableListOf<Int>()
             val lines = mutableMapOf<Int, String>()
             var offset = 0
-            // TODO: fix platform-dependent constant
-            val lineSeparatorLength = file.detectedLineSeparator?.length ?: 2
+            val lineSeparatorLength = file.detectedLineSeparator?.length ?: throw RuntimeException("Curious")
 
             file.inputStream.bufferedReader().useLines { fileLines ->
                 fileLines.forEachIndexed { i, line ->
