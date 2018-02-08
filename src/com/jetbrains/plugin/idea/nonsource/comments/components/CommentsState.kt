@@ -101,11 +101,13 @@ class CommentsState(private val project: Project) : ProjectComponent, Persistent
             val statusBar = WindowManager.getInstance().getStatusBar(project)
             val body = "Your file(s) with comments has been changed.\n" +
                     "<a href=\"see\">See conflicts</a>"
-            // TODO: при первом нажатии эвент срабатывает два раза
             val balloon = JBPopupFactory.getInstance()
                     .createHtmlTextBalloonBuilder(body, MessageType.WARNING, { e: HyperlinkEvent ->
                         if (e.description != "see") {
                             logger.error("Undefined html action: ${e.description}")
+                            return@createHtmlTextBalloonBuilder
+                        }
+                        if (e.eventType != HyperlinkEvent.EventType.ACTIVATED) {
                             return@createHtmlTextBalloonBuilder
                         }
                         val factory = DiffContentFactory.getInstance()
