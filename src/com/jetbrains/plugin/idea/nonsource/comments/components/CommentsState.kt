@@ -87,7 +87,7 @@ class CommentsState(private val project: Project) : ProjectComponent, Persistent
             for (child in fileNode.children) {
                 val text = child.getAttributeValue(TEXT_ATTRIBUTE) ?: continue
                 val offset = child.getAttribute(START_OFFSET_ATTRIBUTE).intValue
-                val oldLine = child.getAttributeValue(LINE_HASH)
+                val oldLine = child.getAttributeValue(LINE_HASH) ?: continue
                 try {
                     val (currentLine, lineNumber) = currentLines.lineByOffset(offset)
                     if (oldLine != currentLine) {
